@@ -19,7 +19,14 @@
 
 ## 获取和恢复工作区
 
-本管理仓目前没有远端。需要离线交接时，可在有本地提交后使用 `git bundle create sim-workspace.bundle --all`，接收者执行 `git clone sim-workspace.bundle SimWorkspace`。bundle 应保存在工作区之外。以后设置远端后，也可以直接 clone 管理仓。以上方式只交付管理仓中的已提交内容，不包含业务仓库和未提交改动。
+管理仓地址为 [ZhanluModelSim/sim-workspace](https://github.com/ZhanluModelSim/sim-workspace)，使用具备仓库访问权限的 GitHub SSH 身份获取：
+
+```bash
+git clone git@github.com:ZhanluModelSim/sim-workspace.git SimWorkspace
+cd SimWorkspace
+```
+
+需要离线交接时，可从仓库根目录执行 `git bundle create ../sim-workspace.bundle --all`，接收者执行 `git clone sim-workspace.bundle SimWorkspace`。以上方式只交付管理仓中的已提交内容，不包含业务仓库和未提交改动。
 
 Git 不保存空目录，业务目录又由根 `.gitignore` 排除。获取管理仓后，从其根目录执行以下命令恢复布局，并单独拉取训练仓库：
 
