@@ -8,10 +8,10 @@
 
 | 目录 | 职责 | 当前状态 |
 | --- | --- | --- |
-| `sim-platform/` | 编排、公共适配、预测缓存、DES 与指标 | 空目录，尚未建仓 |
+| `sim-platform/` | 编排、公共适配、预测缓存、DES 与指标 | 已克隆空仓库，远端名为 `sim-platform-` |
 | `torchtitan-npu-simulator/` | 训练负载发生器 | 已接入独立仓库 |
-| `inference-models-simulator/` | 推理负载发生器 | 空目录，尚未建仓 |
-| `operator-performance-models/` | 算子性能预测模型及其管理 | 空目录，尚未建仓 |
+| `inference-models-simulator/` | 推理负载发生器 | 已克隆空仓库，尚无初始提交 |
+| `operator-performance-models/` | 算子性能预测模型及其管理 | 已克隆空仓库，尚无初始提交 |
 | `docs/` | 跨仓设计、决策、启动资料与文档约定 | 由本仓库管理 |
 | `.agents/` | 可共享的 agent 工作流程与规范入口 | 由本仓库管理 |
 
@@ -28,16 +28,20 @@ cd SimWorkspace
 
 需要离线交接时，可从仓库根目录执行 `git bundle create ../sim-workspace.bundle --all`，接收者执行 `git clone sim-workspace.bundle SimWorkspace`。以上方式只交付管理仓中的已提交内容，不包含业务仓库和未提交改动。
 
-Git 不保存空目录，业务目录又由根 `.gitignore` 排除。获取管理仓后，从其根目录执行以下命令恢复布局，并单独拉取训练仓库：
+业务仓库由根 `.gitignore` 排除。获取管理仓后，从其根目录分别克隆四个业务仓库：
 
 ```bash
-mkdir -p sim-platform inference-models-simulator operator-performance-models
+git clone git@github.com:ZhanluModelSim/sim-platform-.git sim-platform
+git clone git@github.com:ZhanluModelSim/inference-models-simulator.git inference-models-simulator
+git clone git@github.com:ZhanluModelSim/operator-performance-models.git operator-performance-models
 git clone --branch codex/simulator-titan030 \
   git@github.com:ZhanluModelSim/torchtitan-npu-simulator.git \
   torchtitan-npu-simulator
 ```
 
-训练仓库需要相应的 GitHub SSH 访问权限。若目录已存在，先检查其状态，不重复 clone 或覆盖。其他三个仓库尚无已确认远端，不猜测地址或初始化占位代码。
+这些仓库需要相应的 GitHub SSH 访问权限。若目录已存在，先检查其状态，不重复 clone 或覆盖。平台远端目前为 `sim-platform-`（末尾有连字符），本地保持约定名称 `sim-platform`；尚未修改远端名称，后续若更名需同步 origin 和本文命令。
+
+2026-10-30 接入检查：三个新仓库均无提交或跟踪文件，没有 README、AGENTS.md、许可证、包配置或 CI；尚未开发业务代码。建议首先补齐各仓职责说明、协作约定和忽略规则；许可证由项目明确选择。平台随后按单发行包布局初始化，推理与预测仓的具体接口及工程依赖待需求明确后确定，不提前建立统一训练／推理入口或共享契约包。
 
 当前接入基线为 `dc2b6f7a21082bb74c001fb4e05b9fe5ff9cc526`。分支可能继续移动；需要复现本轮源码时，可在训练仓库无本地改动的前提下执行：
 
