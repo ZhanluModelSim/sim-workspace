@@ -65,5 +65,8 @@ git -C torchtitan-npu-simulator switch --detach dc2b6f7a21082bb74c001fb4e05b9fe5
 2. [公共协作与文档规范](docs/workspace-conventions.md)：规则归属、文档维护和验证要求。
 3. [公共 agent 资料](.agents/README.md)：共享内容的放置和使用方式。
 4. [启动评审资料](docs/bootstrap/simplatform-architecture-review/README.md)：原始架构方案和 DES 原型。
+5. [后端职责与核心流程确认](docs/backend-requirements.md)：已确认的预测、DES、两种修正和 offload 要求，以及共享配置建议和待定项。
+
+[旧平台源码分析](docs/legacy-workload-model-platform-review.md) 仅保留为历史调查记录，不是开发必读或实现依据；当前需求以 AGENTS.md 和后端确认文档为准。
 
 启动资料保留历史讨论与实验快照；其中旧目录名称、运行路径和未批准方案不自动成为当前约定。当前确认包括保留 FSDP 通信视图、跨阶段调度归 L2、允许内存对象交付；训练／推理统一入口和推理建模方式仍待资料明确。详细记录以 AGENTS.md 为准。
