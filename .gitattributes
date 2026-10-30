@@ -1,0 +1,4 @@
+# Preserve archived evidence bytes across operating systems and autocrlf settings.
+docs/bootstrap/** -text
+# The archived CSV exports use standard CRLF record separators.
+docs/bootstrap/**/*.csv whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

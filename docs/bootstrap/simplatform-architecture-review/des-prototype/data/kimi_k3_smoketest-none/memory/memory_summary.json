@@ -1,0 +1,26 @@
+{
+  "steady_state_active_bytes_peak": 47399300,
+  "steady_state_forward_active_bytes_peak": 46211968,
+  "steady_state_backward_active_bytes_peak": 47399300,
+  "steady_state_optimizer_active_bytes_peak": 36858728,
+  "persistent_param_bytes": 9214704,
+  "optimizer_state_bytes": 18426776,
+  "activation_offload_by_layer": [
+    {
+      "layer": "layers.0",
+      "transfer_bytes": 0
+    },
+    {
+      "layer": "layers.1",
+      "transfer_bytes": 0
+    },
+    {
+      "layer": "layers.2",
+      "transfer_bytes": 0
+    },
+    {
+      "layer": "layers.3",
+      "transfer_bytes": 0
+    }
+  ]
+}

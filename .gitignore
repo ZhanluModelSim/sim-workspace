@@ -1,0 +1,32 @@
+# Independently managed sibling repositories; never add them as gitlinks.
+/sim-platform/
+/torchtitan-npu-simulator/
+/inference-models-simulator/
+/operator-performance-models/
+
+# Previous checkout names, in case an older workspace is restored.
+/SIMPlatform/
+/inference-workload/
+/Costmodel/
+
+# Local tool state, credentials, environments, and generated run artifacts.
+/.codex/
+/.aws/
+/.agents/local/
+/.venv/
+/venv/
+/.env
+/.env.*
+!/.env.example
+/outputs/
+/runs/
+/tmp/
+/*.bundle
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.DS_Store
+
+# Historical capture data and results under docs/bootstrap remain versioned.

@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="549" viewBox="0 0 1400 549">
+<rect width="100%" height="100%" fill="#f8fafc"/>
+<style>text{font-family:Arial,sans-serif;fill:#20334b;font-size:13px}</style>
+<text x="20" y="30" style="font-size:22px">deepseek_v4_smoketest-selective — overlap</text>
+<text x="20" y="55">Synthetic ticks, NOT hardware time. Orange: COMM / blue: CUBE / green: VEC / purple: mixed.</text>
+<text x="20" y="77">Same operation appears on its queue and resource lanes. Hover bars for ID, type and module.</text>
+<path d="M145.0,100 V509" stroke="#dfe6ef"/><text x="145.0" y="97">4</text>
+<path d="M390.0,100 V509" stroke="#dfe6ef"/><text x="390.0" y="97">34</text>
+<path d="M635.0,100 V509" stroke="#dfe6ef"/><text x="635.0" y="97">63</text>
+<path d="M879.9999999999999,100 V509" stroke="#dfe6ef"/><text x="879.9999999999999" y="97">93</text>
+<path d="M1125.0,100 V509" stroke="#dfe6ef"/><text x="1125.0" y="97">122</text>
+<path d="M1370.0,100 V509" stroke="#dfe6ef"/><text x="1370.0" y="97">152</text>
+<text x="15" y="135">queue 0</text><path d="M145,149 H1375" stroke="#cbd5e1"/>
+<rect x="194.66" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5411 | fsdp.split_with_sizes_copy.default | [10, 12] | queue 0 | </title></rect>
+<rect x="260.88" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5435 | fsdp.split_with_sizes_copy.default | [18, 20] | queue 0 | FSDPDeepSeekV4Model</title></rect>
+<rect x="277.43" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5492 | aten.embedding.default | [20, 22] | queue 0 | tok_embeddings</title></rect>
+<rect x="293.99" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5496 | aten.repeat.default | [22, 24] | queue 0 | FSDPDeepSeekV4Model</title></rect>
+<rect x="327.09" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5583 | fsdp.split_with_sizes_copy.default | [26, 28] | queue 0 | FSDPDeepSeekV4Model</title></rect>
+<rect x="343.65" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5610 | aten._to_copy.default | [28, 30] | queue 0 | FSDPDeepSeekV4Model</title></rect>
+<rect x="360.20" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5612 | aten.copy_.default | [30, 32] | queue 0 | FSDPDeepSeekV4Model</title></rect>
+<rect x="376.76" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5613 | aten._to_copy.default | [32, 34] | queue 0 | FSDPDeepSeekV4Model</title></rect>
+<rect x="393.31" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5615 | aten.copy_.default | [34, 36] | queue 0 | FSDPDeepSeekV4Model</title></rect>
+<rect x="409.86" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5616 | aten._to_copy.default | [36, 38] | queue 0 | FSDPDeepSeekV4Model</title></rect>
+<rect x="426.42" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5618 | aten.copy_.default | [38, 40] | queue 0 | FSDPDeepSeekV4Model</title></rect>
+<rect x="476.08" y="115" width="99.32" height="28" rx="2" fill="#8b60ba"><title>ID 5679 | cann_ops_transformer.mhc_pre_sinkhorn.default | [44, 56] | queue 0 | layers.0._checkpoint_wrapped_module.hc_attn_pre</title></rect>
+<text x="479.08" y="134" style="fill:white;font-size:11px">5679</text>
+<rect x="575.41" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5681 | npu.npu_rms_norm.default | [56, 58] | queue 0 | layers.0._checkpoint_wrapped_module.attention_norm</title></rect>
+<rect x="591.96" y="115" width="99.32" height="28" rx="2" fill="#3578ce"><title>ID 5684 | aten.mm.default | [58, 70] | queue 0 | layers.0._checkpoint_wrapped_module.attention.wq_a</title></rect>
+<text x="594.96" y="134" style="fill:white;font-size:11px">5684</text>
+<rect x="691.28" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5687 | npu.npu_rms_norm.default | [70, 72] | queue 0 | layers.0._checkpoint_wrapped_module.attention.q_norm</title></rect>
+<rect x="707.84" y="115" width="99.32" height="28" rx="2" fill="#3578ce"><title>ID 5690 | aten.mm.default | [72, 84] | queue 0 | layers.0._checkpoint_wrapped_module.attention.wq_b</title></rect>
+<text x="710.84" y="134" style="fill:white;font-size:11px">5690</text>
+<rect x="807.16" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5693 | npu.npu_rms_norm.default | [84, 86] | queue 0 | layers.0._checkpoint_wrapped_module.attention.q_head_norm</title></rect>
+<rect x="823.72" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5696 | aten.index.Tensor | [86, 88] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="840.27" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5699 | aten.index.Tensor | [88, 90] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="856.82" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5702 | aten._to_copy.default | [90, 92] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="873.38" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5703 | aten._to_copy.default | [92, 94] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="889.93" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5704 | aten._to_copy.default | [94, 96] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="906.49" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5705 | npu.npu_rotary_mul.default | [96, 98] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="923.04" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5706 | aten._to_copy.default | [98, 100] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="939.59" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5708 | aten.cat.default | [100, 102] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="956.15" y="115" width="99.32" height="28" rx="2" fill="#3578ce"><title>ID 5711 | aten.mm.default | [102, 114] | queue 0 | layers.0._checkpoint_wrapped_module.attention.wkv</title></rect>
+<text x="959.15" y="134" style="fill:white;font-size:11px">5711</text>
+<rect x="1055.47" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5714 | npu.npu_rms_norm.default | [114, 116] | queue 0 | layers.0._checkpoint_wrapped_module.attention.kv_norm</title></rect>
+<rect x="1072.03" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5719 | aten.index.Tensor | [116, 118] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="1088.58" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5722 | aten.index.Tensor | [118, 120] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="1105.14" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5725 | aten._to_copy.default | [120, 122] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="1121.69" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5726 | aten._to_copy.default | [122, 124] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="1138.24" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5727 | aten._to_copy.default | [124, 126] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="1154.80" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5728 | npu.npu_rotary_mul.default | [126, 128] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="1171.35" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5729 | aten._to_copy.default | [128, 130] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="1187.91" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5731 | aten.cat.default | [130, 132] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="1204.46" y="115" width="99.32" height="28" rx="2" fill="#8b60ba"><title>ID 5736 | cann_ops_transformer.sparse_flash_mla.default | [132, 144] | queue 0 | layers.0._checkpoint_wrapped_module.attention.compressed_sparse_attention.inner_attention</title></rect>
+<text x="1207.46" y="134" style="fill:white;font-size:11px">5736</text>
+<rect x="1303.78" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5740 | aten.index.Tensor | [144, 146] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="1320.34" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5743 | aten.index.Tensor | [146, 148] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="1336.89" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5746 | aten._to_copy.default | [148, 150] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="1353.45" y="115" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5747 | aten._to_copy.default | [150, 152] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<text x="15" y="183">queue 1</text><path d="M145,197 H1375" stroke="#cbd5e1"/>
+<rect x="145.00" y="163" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5424 | fsdp.all_gather_copy_in.default | [4, 6] | queue 1 | FSDPDeepSeekV4Model</title></rect>
+<rect x="211.22" y="163" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5443 | aten._foreach_copy_.default | [12, 14] | queue 1 | FSDPDeepSeekV4Model</title></rect>
+<rect x="227.77" y="163" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5485 | fsdp.all_gather_copy_in.default | [14, 16] | queue 1 | FSDPDeepSeekV4Model</title></rect>
+<rect x="442.97" y="163" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5630 | aten._foreach_copy_.default | [40, 42] | queue 1 | FSDPDeepSeekV4Model</title></rect>
+<rect x="459.53" y="163" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5672 | fsdp.all_gather_copy_in.default | [42, 44] | queue 1 | FSDPDeepSeekV4Model</title></rect>
+<text x="15" y="231">queue 2</text><path d="M145,245 H1375" stroke="#cbd5e1"/>
+<rect x="145.00" y="211" width="49.66" height="28" rx="2" fill="#e89730"><title>ID 5400 | c10d._allgather_base_.default | [2, 10] | queue 2 | </title></rect>
+<text x="148.00" y="230" style="fill:white;font-size:11px">5400</text>
+<rect x="194.66" y="211" width="66.22" height="28" rx="2" fill="#e89730"><title>ID 5426 | c10d._allgather_base_.default | [10, 18] | queue 2 | FSDPDeepSeekV4Model</title></rect>
+<text x="197.66" y="230" style="fill:white;font-size:11px">5426</text>
+<rect x="260.88" y="211" width="66.22" height="28" rx="2" fill="#e89730"><title>ID 5487 | c10d._allgather_base_.default | [18, 26] | queue 2 | FSDPDeepSeekV4Model</title></rect>
+<text x="263.88" y="230" style="fill:white;font-size:11px">5487</text>
+<rect x="476.08" y="211" width="66.22" height="28" rx="2" fill="#e89730"><title>ID 5674 | c10d._allgather_base_.default | [44, 52] | queue 2 | FSDPDeepSeekV4Model</title></rect>
+<text x="479.08" y="230" style="fill:white;font-size:11px">5674</text>
+<text x="15" y="279">queue 3</text><path d="M145,293 H1375" stroke="#cbd5e1"/>
+<text x="15" y="327">queue 4</text><path d="M145,341 H1375" stroke="#cbd5e1"/>
+<text x="15" y="375">CUBE</text><path d="M145,389 H1375" stroke="#cbd5e1"/>
+<rect x="476.08" y="355" width="99.32" height="28" rx="2" fill="#8b60ba"><title>ID 5679 | cann_ops_transformer.mhc_pre_sinkhorn.default | [44, 56] | queue 0 | layers.0._checkpoint_wrapped_module.hc_attn_pre</title></rect>
+<text x="479.08" y="374" style="fill:white;font-size:11px">5679</text>
+<rect x="591.96" y="355" width="99.32" height="28" rx="2" fill="#3578ce"><title>ID 5684 | aten.mm.default | [58, 70] | queue 0 | layers.0._checkpoint_wrapped_module.attention.wq_a</title></rect>
+<text x="594.96" y="374" style="fill:white;font-size:11px">5684</text>
+<rect x="707.84" y="355" width="99.32" height="28" rx="2" fill="#3578ce"><title>ID 5690 | aten.mm.default | [72, 84] | queue 0 | layers.0._checkpoint_wrapped_module.attention.wq_b</title></rect>
+<text x="710.84" y="374" style="fill:white;font-size:11px">5690</text>
+<rect x="956.15" y="355" width="99.32" height="28" rx="2" fill="#3578ce"><title>ID 5711 | aten.mm.default | [102, 114] | queue 0 | layers.0._checkpoint_wrapped_module.attention.wkv</title></rect>
+<text x="959.15" y="374" style="fill:white;font-size:11px">5711</text>
+<rect x="1204.46" y="355" width="99.32" height="28" rx="2" fill="#8b60ba"><title>ID 5736 | cann_ops_transformer.sparse_flash_mla.default | [132, 144] | queue 0 | layers.0._checkpoint_wrapped_module.attention.compressed_sparse_attention.inner_attention</title></rect>
+<text x="1207.46" y="374" style="fill:white;font-size:11px">5736</text>
+<text x="15" y="423">VEC</text><path d="M145,437 H1375" stroke="#cbd5e1"/>
+<rect x="194.66" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5411 | fsdp.split_with_sizes_copy.default | [10, 12] | queue 0 | </title></rect>
+<rect x="145.00" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5424 | fsdp.all_gather_copy_in.default | [4, 6] | queue 1 | FSDPDeepSeekV4Model</title></rect>
+<rect x="260.88" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5435 | fsdp.split_with_sizes_copy.default | [18, 20] | queue 0 | FSDPDeepSeekV4Model</title></rect>
+<rect x="211.22" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5443 | aten._foreach_copy_.default | [12, 14] | queue 1 | FSDPDeepSeekV4Model</title></rect>
+<rect x="227.77" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5485 | fsdp.all_gather_copy_in.default | [14, 16] | queue 1 | FSDPDeepSeekV4Model</title></rect>
+<rect x="277.43" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5492 | aten.embedding.default | [20, 22] | queue 0 | tok_embeddings</title></rect>
+<rect x="293.99" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5496 | aten.repeat.default | [22, 24] | queue 0 | FSDPDeepSeekV4Model</title></rect>
+<rect x="327.09" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5583 | fsdp.split_with_sizes_copy.default | [26, 28] | queue 0 | FSDPDeepSeekV4Model</title></rect>
+<rect x="343.65" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5610 | aten._to_copy.default | [28, 30] | queue 0 | FSDPDeepSeekV4Model</title></rect>
+<rect x="360.20" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5612 | aten.copy_.default | [30, 32] | queue 0 | FSDPDeepSeekV4Model</title></rect>
+<rect x="376.76" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5613 | aten._to_copy.default | [32, 34] | queue 0 | FSDPDeepSeekV4Model</title></rect>
+<rect x="393.31" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5615 | aten.copy_.default | [34, 36] | queue 0 | FSDPDeepSeekV4Model</title></rect>
+<rect x="409.86" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5616 | aten._to_copy.default | [36, 38] | queue 0 | FSDPDeepSeekV4Model</title></rect>
+<rect x="426.42" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5618 | aten.copy_.default | [38, 40] | queue 0 | FSDPDeepSeekV4Model</title></rect>
+<rect x="442.97" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5630 | aten._foreach_copy_.default | [40, 42] | queue 1 | FSDPDeepSeekV4Model</title></rect>
+<rect x="459.53" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5672 | fsdp.all_gather_copy_in.default | [42, 44] | queue 1 | FSDPDeepSeekV4Model</title></rect>
+<rect x="476.08" y="403" width="99.32" height="28" rx="2" fill="#8b60ba"><title>ID 5679 | cann_ops_transformer.mhc_pre_sinkhorn.default | [44, 56] | queue 0 | layers.0._checkpoint_wrapped_module.hc_attn_pre</title></rect>
+<text x="479.08" y="422" style="fill:white;font-size:11px">5679</text>
+<rect x="575.41" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5681 | npu.npu_rms_norm.default | [56, 58] | queue 0 | layers.0._checkpoint_wrapped_module.attention_norm</title></rect>
+<rect x="691.28" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5687 | npu.npu_rms_norm.default | [70, 72] | queue 0 | layers.0._checkpoint_wrapped_module.attention.q_norm</title></rect>
+<rect x="807.16" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5693 | npu.npu_rms_norm.default | [84, 86] | queue 0 | layers.0._checkpoint_wrapped_module.attention.q_head_norm</title></rect>
+<rect x="823.72" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5696 | aten.index.Tensor | [86, 88] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="840.27" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5699 | aten.index.Tensor | [88, 90] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="856.82" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5702 | aten._to_copy.default | [90, 92] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="873.38" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5703 | aten._to_copy.default | [92, 94] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="889.93" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5704 | aten._to_copy.default | [94, 96] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="906.49" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5705 | npu.npu_rotary_mul.default | [96, 98] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="923.04" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5706 | aten._to_copy.default | [98, 100] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="939.59" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5708 | aten.cat.default | [100, 102] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="1055.47" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5714 | npu.npu_rms_norm.default | [114, 116] | queue 0 | layers.0._checkpoint_wrapped_module.attention.kv_norm</title></rect>
+<rect x="1072.03" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5719 | aten.index.Tensor | [116, 118] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="1088.58" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5722 | aten.index.Tensor | [118, 120] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="1105.14" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5725 | aten._to_copy.default | [120, 122] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="1121.69" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5726 | aten._to_copy.default | [122, 124] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="1138.24" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5727 | aten._to_copy.default | [124, 126] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="1154.80" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5728 | npu.npu_rotary_mul.default | [126, 128] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="1171.35" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5729 | aten._to_copy.default | [128, 130] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="1187.91" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5731 | aten.cat.default | [130, 132] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="1204.46" y="403" width="99.32" height="28" rx="2" fill="#8b60ba"><title>ID 5736 | cann_ops_transformer.sparse_flash_mla.default | [132, 144] | queue 0 | layers.0._checkpoint_wrapped_module.attention.compressed_sparse_attention.inner_attention</title></rect>
+<text x="1207.46" y="422" style="fill:white;font-size:11px">5736</text>
+<rect x="1303.78" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5740 | aten.index.Tensor | [144, 146] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="1320.34" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5743 | aten.index.Tensor | [146, 148] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="1336.89" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5746 | aten._to_copy.default | [148, 150] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<rect x="1353.45" y="403" width="16.55" height="28" rx="2" fill="#2a9c82"><title>ID 5747 | aten._to_copy.default | [150, 152] | queue 0 | layers.0._checkpoint_wrapped_module.attention.rope</title></rect>
+<text x="15" y="471">COMM</text><path d="M145,485 H1375" stroke="#cbd5e1"/>
+<rect x="145.00" y="451" width="49.66" height="28" rx="2" fill="#e89730"><title>ID 5400 | c10d._allgather_base_.default | [2, 10] | queue 2 | </title></rect>
+<text x="148.00" y="470" style="fill:white;font-size:11px">5400</text>
+<rect x="194.66" y="451" width="66.22" height="28" rx="2" fill="#e89730"><title>ID 5426 | c10d._allgather_base_.default | [10, 18] | queue 2 | FSDPDeepSeekV4Model</title></rect>
+<text x="197.66" y="470" style="fill:white;font-size:11px">5426</text>
+<rect x="260.88" y="451" width="66.22" height="28" rx="2" fill="#e89730"><title>ID 5487 | c10d._allgather_base_.default | [18, 26] | queue 2 | FSDPDeepSeekV4Model</title></rect>
+<text x="263.88" y="470" style="fill:white;font-size:11px">5487</text>
+<rect x="476.08" y="451" width="66.22" height="28" rx="2" fill="#e89730"><title>ID 5674 | c10d._allgather_base_.default | [44, 52] | queue 2 | FSDPDeepSeekV4Model</title></rect>
+<text x="479.08" y="470" style="fill:white;font-size:11px">5674</text>
+</svg>

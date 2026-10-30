@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="1530" viewBox="0 0 1320 1530"><defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#55677d"/></marker></defs><rect width="1320" height="1530" fill="#f6f8fc"/><style>text{font-family:"Noto Sans CJK SC","Microsoft YaHei",sans-serif;fill:#17304c}.title{font-size:28px;font-weight:bold}.label{font-size:20px;font-weight:bold}.small{font-size:16px}.arrow{fill:none;stroke:#55677d;stroke-width:2;marker-end:url(#arrow)}</style>
+<text x="40" y="48" class="title">SIMPlatform：整体执行架构与仓库边界</text>
+<text x="40" y="78" class="small">评审草案 · 线性执行流程 · 四个业务仓库 · 平台单发行包 · 契约包按需建立</text>
+<rect x="30" y="105" width="850" height="1325" rx="14" fill="#eaf1fb" stroke="#7b9ac1"/>
+<text x="50" y="138" class="label">SIMPlatform 仓库：编排、适配、公共处理、DES、指标</text>
+<rect x="80" y="160" width="750" height="82" rx="10" fill="#ffffff" stroke="#aec0d5"/>
+<text x="98" y="190" class="label">多任务组织器</text>
+<text x="98" y="217" class="small">批量展开／寻优策略 · 资源与进程管理 · 任务结果汇总</text>
+<path class="arrow" d="M455,242 L455,270"/>
+<rect x="80" y="270" width="750" height="82" rx="10" fill="#ffffff" stroke="#aec0d5"/>
+<text x="98" y="300" class="label">单任务函数入口（CLI 为薄封装）</text>
+<text x="98" y="327" class="small">校验 TaskSpec · 选择组件 · 记录版本和环境 · 执行阶段状态</text>
+<path class="arrow" d="M455,352 L455,390"/>
+<rect x="80" y="390" width="750" height="82" rx="10" fill="#ffffff" stroke="#aec0d5"/>
+<text x="98" y="420" class="label">发生器调用与适配器</text>
+<text x="98" y="447" class="small">调用独立训练／推理发生器，接收原生负载包 M/N</text>
+<rect x="930" y="345" width="350" height="106" rx="10" fill="#e8f5ee" stroke="#aec0d5"/>
+<text x="948" y="375" class="label">训练负载仓库</text>
+<text x="948" y="402" class="small">原生图 M／调度／生命周期</text>
+<text x="948" y="425" class="small">训练专属处理与可选修正规则</text>
+<rect x="930" y="475" width="350" height="106" rx="10" fill="#e8f5ee" stroke="#aec0d5"/>
+<text x="948" y="505" class="label">推理负载仓库</text>
+<text x="948" y="532" class="small">原生图 N／调度／生命周期</text>
+<text x="948" y="555" class="small">推理专属处理与可选修正规则</text>
+<path class="arrow" d="M930,420 L830,420"/>
+<path class="arrow" d="M930,525 L900,525 L900,445 L830,445"/>
+<path class="arrow" d="M455,472 L455,515"/>
+<rect x="80" y="515" width="750" height="106" rx="10" fill="#ffffff" stroke="#aec0d5"/>
+<text x="98" y="545" class="label">公共后处理：M/N → 统一负载包 G</text>
+<text x="98" y="572" class="small">结构、名称与分类归一 · 原始节点身份映射</text>
+<text x="98" y="595" class="small">通用保存／导出／编辑；算子图、调度与生命周期分别表达</text>
+<path class="arrow" d="M455,621 L455,650"/>
+<rect x="80" y="650" width="750" height="82" rx="10" fill="#ffffff" stroke="#aec0d5"/>
+<text x="98" y="680" class="label">算子性能预测与缓存</text>
+<text x="98" y="707" class="small">按算子描述、硬件、预测模型与归一版本查询／预测</text>
+<rect x="930" y="640" width="350" height="106" rx="10" fill="#fff1dc" stroke="#aec0d5"/>
+<text x="948" y="670" class="label">Costmodel 仓库</text>
+<text x="948" y="697" class="small">预测特征归一 · 多模型选择</text>
+<text x="948" y="720" class="small">返回性能、适用条件与来源</text>
+<path class="arrow" d="M830,678 L930,678"/>
+<path class="arrow" d="M930,716 L830,716"/>
+<path class="arrow" d="M455,732 L455,760"/>
+<rect x="80" y="760" width="750" height="82" rx="10" fill="#ffffff" stroke="#aec0d5"/>
+<text x="98" y="790" class="label">L1 DES：单图推演</text>
+<text x="98" y="817" class="small">消费 G 与算子预测，生成原始 L1 结果</text>
+<path class="arrow" d="M455,842 L455,870"/>
+<rect x="80" y="870" width="750" height="106" rx="10" fill="#eeeafd" stroke="#aec0d5"/>
+<text x="98" y="900" class="label">模型专属 L1 结果修正（固定阶段）</text>
+<text x="98" y="927" class="small">执行负载提供的轻量规则／回调；保留原结果与修改记录</text>
+<text x="98" y="950" class="small">修改节点耗时后明确是否重算；不默认重新抓图</text>
+<path d="M1110,581 L1110,900 L830,900" fill="none" stroke="#8a72b6" stroke-width="2" stroke-dasharray="6,5" marker-end="url(#arrow)"/>
+<text x="945" y="825" class="small">规则随负载交付</text>
+<text x="945" y="850" class="small">由平台按阶段触发</text>
+<path class="arrow" d="M455,976 L455,1005"/>
+<rect x="80" y="1005" width="750" height="82" rx="10" fill="#ffffff" stroke="#aec0d5"/>
+<text x="98" y="1035" class="label">L2 DES：调度推演</text>
+<text x="98" y="1062" class="small">结合调度结构与 L1 结果进行执行推演</text>
+<path class="arrow" d="M455,1087 L455,1115"/>
+<rect x="80" y="1115" width="750" height="82" rx="10" fill="#ffffff" stroke="#aec0d5"/>
+<text x="98" y="1145" class="label">性能后处理与指标计算</text>
+<text x="98" y="1172" class="small">通用插件 · 指标定义 · 假设与适用范围</text>
+<path class="arrow" d="M455,1197 L455,1225"/>
+<rect x="80" y="1225" width="750" height="106" rx="10" fill="#ffffff" stroke="#aec0d5"/>
+<text x="98" y="1255" class="label">结果输出与任务汇总</text>
+<text x="98" y="1282" class="small">产物、阶段状态、源码／环境版本、预测与修正来源</text>
+<text x="98" y="1305" class="small">单任务结果返回组织器；支持固定组合复现</text>
+<rect x="930" y="1060" width="350" height="152" rx="10" fill="#ffffff" stroke="#aec0d5"/>
+<text x="948" y="1090" class="label">共享契约包（待批准）</text>
+<text x="948" y="1117" class="small">版本／能力声明</text>
+<text x="948" y="1140" class="small">窄结果接口／修正协议</text>
+<text x="948" y="1163" class="small">无 torch、CANN、DES 依赖</text>
+<text x="948" y="1186" class="small">未批准前由适配器转换</text>
+<text x="50" y="1380" class="small">依赖方向：平台 → 组件；组件不导入平台内部实现。</text>
+<text x="50" y="1406" class="small">训练与推理可使用独立环境／容器，不要求共用 Python 依赖。</text>
+<text x="40" y="1470" class="small">协作：组件 PR → 精确提交组合的集成 CI → 组件合入 → 平台更新集成清单</text>
+<text x="40" y="1500" class="small">待评审：公共契约依赖方式、G 的范围、L1 修正语义、回调执行环境、源码管理工具。</text>
+</svg>

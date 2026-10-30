@@ -1,0 +1,6 @@
+{
+  "data/kimi_k3_smoketest-selective.json": "ce1d9650a0975dce386f4a14864df4c24dbe3fcfad07b605673e9fbd592737c0",
+  "data/kimi_k3_smoketest-none.json": "81738adc2e9efe9fd2a13d640ed087485e49ff997d78aeec5ca3474c83a4a233",
+  "data/deepseek_v4_smoketest-selective.json": "9c2a99a10b3633525fb3caf1e277af4de9df8f005a31569436dfcabf1aec465c",
+  "data/deepseek_v4_smoketest-none.json": "a155aa8e523f2e123500b9728e4d6121a536593db0563c0893e317deab7967ec"
+}
