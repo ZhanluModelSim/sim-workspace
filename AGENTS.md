@@ -36,6 +36,14 @@ SimWorkspace/
 
 跨仓协作和文档维护遵循 `docs/workspace-conventions.md`；公共 agent 资料入口见 `.agents/README.md`。
 
+## Agent 协作方式
+
+后续开发采用[多仓协作推荐工作流](.agents/workflows/multi-agent-development.md)：主 agent 负责需求讨论、总体设计、任务拆分、review 与集成验收；边界和验收条件明确的独立任务可按需委派子 agent。不要求每仓固定一个 agent，小任务由主 agent 直接完成。
+
+当前需求讨论必须由主 agent 与用户直接完成，不委派需求确认，不让各仓自行补齐未定假设。派发时明确修改范围、依据、排除项及交付要求；每份可变内容只安排一个写入者。主 agent 检查实际 diff 和验证证据，统一协调跨仓变更与交付。
+
+## 资料阅读与决策依据
+
 开始架构或实现工作前，按任务需要阅读：
 
 1. `docs/bootstrap/simplatform-architecture-review/README.md`
