@@ -4,13 +4,13 @@
 
 本工作区用于协同开发大模型训练／推理负载仿真系统，贯通负载生成、算子性能预测、L1/L2 离散事件仿真（DES）、指标输出，并逐步支持批量任务与寻优。
 
-已确定采用同级独立仓库布局。工作区根目录组织跨仓开发，SIMPlatform 负责产品集成。根目录作为轻量 Git 管理仓，管理协作规则、公共规范和文档，独立业务仓库从根仓排除。四个业务仓库均已接入；平台、推理和算子性能预测仓库当前仅初始化职责 README，尚无业务代码。不要将仓库存在视为代码已实现。
+已确定采用同级独立仓库布局。工作区根目录组织跨仓开发，SIMPlatform 负责产品集成。根目录作为轻量 Git 管理仓，管理协作规则、公共规范和文档，独立业务仓库从根仓排除。四个业务仓库均已接入；平台与算子性能预测仓已进入训练优先实现阶段，推理仓仍为需求文档。当前实现和验证范围见平台 docs/development-status.md；不能将测试用 synthetic 预测视为真实 roofline 能力。
 
 新仓接入记录（2026-10-30）：已克隆组织下的平台、推理与算子性能预测仓库。平台远端最初为 `sim-platform-`，用户已更名为 `sim-platform`，本地 origin 与获取说明同步更新。三个新仓本轮只写职责 README：说明已讨论的分工和未决事项，不写实现方案、接口契约或新的工程约定，不初始化业务代码。获取命令见根 README。
 
 训练仓库接入记录（2026-10-30）：从 `/home/andy/Projects/torchtitan-npu-simulator` 的干净工作树创建独立本地 clone，使用 `--no-hardlinks`，未共享 Git objects alternates；分支为 `codex/simulator-titan030`，基线提交为 `dc2b6f7a21082bb74c001fb4e05b9fe5ff9cc526`。`origin` 已设为 `git@github.com:ZhanluModelSim/torchtitan-npu-simulator.git`。此次没有联网 fetch，不表示远端最新状态。该记录是接入来源，不代替未来平台集成清单；实际开发时重新检查 HEAD 与工作树。
 
-当前训练接入仅完成源码就位与静态分析，尚未在新路径安装、绑定容器或重跑捕获。训练仓库内记录的旧宿主／容器路径属于原环境；运行前须核对主包和 simulator 的实际导入路径，不能默认新 checkout 已被旧 editable 安装使用。
+当前已在 ttsim 容器独立虚拟环境安装工作区训练 checkout，并完成真实 Meta 捕获和平台系统验证。训练仓库内记录的旧宿主／容器路径属于原环境；运行前须核对主包和 simulator 的实际导入路径，不能默认新 checkout 已被旧 editable 安装使用。
 
 ## 目录与职责
 
@@ -34,7 +34,7 @@ SimWorkspace/
 
 ## 资料与决策状态
 
-跨仓协作和文档维护遵循 `docs/workspace-conventions.md`；公共 agent 资料入口见 `.agents/README.md`。
+跨仓协作和文档维护遵循 `docs/workspace-conventions.md`；公共 agent 资料入口见 `.agents/README.md`；Python 开发遵循 [.agents/standards/python-development.md](.agents/standards/python-development.md)，新仓统一工具基线，训练仓保留自身工具链。
 
 ## Agent 协作方式
 
@@ -75,7 +75,7 @@ SimWorkspace/
 - 当前只采用 **roofline**，保留多预测后端、可配置选择与 fallback、算子级／局部硬件覆盖能力。局部硬件覆盖不自动承诺异构部署仿真；缺失预测不能伪造为成功。
 - 缓存原始预测，vec 等修正在缓存之后；键须覆盖实际特征、硬件、模型／归一版本与预测配置，不绕过路由和 fallback。图依赖或 vec 系数改变后，重新执行受影响的 DES；缓存不保存某次执行的节点身份和时间线。
 - 用户偏好进程内集中共享、可读可写且可查询的 global args 类配置，支持环境变量／CLI／程序 args 初始化。已确认它管理进程默认设置与公共开关，单次任务的模型／运行配置及 context 独立保存，搜索候选不能互相覆盖。具体单例 API、来源优先级与运行中更新规则待定；配置快照、类型校验及注入视图仍是建议，不让组件为此反向依赖平台。
-- 指标种类、公式及输出 schema 尚未确认。本轮只维护需求文档，不开发代码。两个旧 issue 是讨论素材；旧 workload-model-platform 仅用于理解职责，不是开发必读或实现依据。
+- 指标种类、公式及输出 schema 尚未确认。现已获用户授权逐步实现与测试，MoE 具体规则暂不开发。两个旧 issue 是讨论素材；旧 workload-model-platform 仅用于理解职责，不是开发必读或实现依据。
 
 ### 2026-10-30 推理需求与首期范围确认
 
@@ -121,4 +121,8 @@ SimWorkspace/
 
 按启动方案逐步贯通：A 边界与工程骨架 → B 训练最小链路 → C 真实预测与修正 → D 推理接入 → E 契约稳定与规模化编排。
 
-优先用真实小案例检验接口，再扩大抽象；公共契约应在训练和推理路径均验证后稳定。当前已建立轻量工作区管理仓、接入四个业务仓库并整理训练对接构想；尚未初始化三个新仓的工程骨架或将原型生产化。后续实现按用户的新任务推进。
+优先用真实小案例检验接口，再扩大抽象；公共契约应在训练和推理路径均验证后稳定。当前平台与算子预测仓已初始化可安装 Python 包，训练最小工程链路已实现；真实 roofline、自动 offload 窗口配对、MoE 规则与推理接入继续按需求推进。实现必须包含单元／模块／系统验证和独立 review。
+
+### 公共算子名称与分类（最新确认）
+
+公共图以 PascalCase 简化名称供 costmodel 匹配，移除框架命名空间和 overload 后缀，同时保留 raw_name 调试。初期覆盖常见 ATen/CANN 与实际训练样本，可迭代扩展规则。核心 category 为 mix、cube、vec、comm、h2d、d2h、control、zero，未知保持 unknown。mix 默认同时需要 cube 与 vec；类别、耗时、资源需求独立表达。control 是独立类别，默认零耗时零资源；View 等纯元数据操作归 zero，默认也不需要资源。零耗时节点可显式请求资源，但不能凭空产生持续占用时间；依赖始终保留。不可将可能搬运数据的 reshape、contiguous、copy 一概标为 zero。
