@@ -4,9 +4,9 @@
 
 本工作区用于协同开发大模型训练／推理负载仿真系统，贯通负载生成、算子性能预测、L1/L2 离散事件仿真（DES）、指标输出，并逐步支持批量任务与寻优。
 
-已确定采用同级独立仓库布局。工作区根目录组织跨仓开发，SIMPlatform 负责产品集成。根目录作为轻量 Git 管理仓，管理协作规则、公共规范和文档，独立业务仓库从根仓排除。四个业务仓库均已接入；平台、推理和算子性能预测仓库目前为空 Git 仓库，尚无初始提交或业务代码。不要将仓库存在视为代码已实现。
+已确定采用同级独立仓库布局。工作区根目录组织跨仓开发，SIMPlatform 负责产品集成。根目录作为轻量 Git 管理仓，管理协作规则、公共规范和文档，独立业务仓库从根仓排除。四个业务仓库均已接入；平台、推理和算子性能预测仓库当前仅初始化职责 README，尚无业务代码。不要将仓库存在视为代码已实现。
 
-新仓接入记录（2026-10-30）：已从组织克隆 `ZhanluModelSim/sim-platform-`、`ZhanluModelSim/inference-models-simulator`、`ZhanluModelSim/operator-performance-models`，分别放在 `sim-platform/`、`inference-models-simulator/`、`operator-performance-models/`。平台远端名称末尾有连字符，本地名称不变；没有擅自修改远端。三个仓库均没有 README、AGENTS.md、许可证、包配置或 CI，后续按实际任务初始化。获取命令见根 README。
+新仓接入记录（2026-10-30）：已克隆组织下的平台、推理与算子性能预测仓库。平台远端最初为 `sim-platform-`，用户已更名为 `sim-platform`，本地 origin 与获取说明同步更新。三个新仓本轮只写职责 README：说明已讨论的分工和未决事项，不写实现方案、接口契约或新的工程约定，不初始化业务代码。获取命令见根 README。
 
 训练仓库接入记录（2026-10-30）：从 `/home/andy/Projects/torchtitan-npu-simulator` 的干净工作树创建独立本地 clone，使用 `--no-hardlinks`，未共享 Git objects alternates；分支为 `codex/simulator-titan030`，基线提交为 `dc2b6f7a21082bb74c001fb4e05b9fe5ff9cc526`。`origin` 已设为 `git@github.com:ZhanluModelSim/torchtitan-npu-simulator.git`。此次没有联网 fetch，不表示远端最新状态。该记录是接入来源，不代替未来平台集成清单；实际开发时重新检查 HEAD 与工作树。
 
@@ -77,7 +77,7 @@ SimWorkspace/
 ## 跨仓修改与版本管理
 
 - 进入业务仓库后，先阅读其适用的 `AGENTS.md`，检查 Git 状态与已有改动；不覆盖用户未提交工作。
-- 每个业务仓库独立管理 Git、依赖、测试和发布。空仓的文档、工程骨架和业务实现按后续任务推进。
+- 每个业务仓库独立管理 Git、依赖、测试和发布。职责说明之外的接口、工程骨架和业务实现按后续讨论与任务推进。
 - 平台单向锁定已验证的组件组合；组件不反向锁定平台提交。正式清单记录精确 commit 与环境信息，分支名不能代替可复现版本。
 - 本地覆盖需记录路径、实际 SHA 与 dirty 状态，不能静默写入正式发布组合。
 - 跨仓变更先保持组件接口兼容，以候选精确提交组合做集成验证；组件合入后更新最终 SHA 并重新验证，平台最后合入集成清单。

@@ -8,10 +8,10 @@
 
 | 目录 | 职责 | 当前状态 |
 | --- | --- | --- |
-| `sim-platform/` | 编排、公共适配、预测缓存、DES 与指标 | 已克隆空仓库，远端名为 `sim-platform-` |
+| `sim-platform/` | 编排、公共适配、预测缓存、DES 与指标 | 已接入，当前仅有职责 README |
 | `torchtitan-npu-simulator/` | 训练负载发生器 | 已接入独立仓库 |
-| `inference-models-simulator/` | 推理负载发生器 | 已克隆空仓库，尚无初始提交 |
-| `operator-performance-models/` | 算子性能预测模型及其管理 | 已克隆空仓库，尚无初始提交 |
+| `inference-models-simulator/` | 推理负载发生器 | 已接入，当前仅有职责 README |
+| `operator-performance-models/` | 算子性能预测模型及其管理 | 已接入，当前仅有职责 README |
 | `docs/` | 跨仓设计、决策、启动资料与文档约定 | 由本仓库管理 |
 | `.agents/` | 可共享的 agent 工作流程与规范入口 | 由本仓库管理 |
 
@@ -31,7 +31,7 @@ cd SimWorkspace
 业务仓库由根 `.gitignore` 排除。获取管理仓后，从其根目录分别克隆四个业务仓库：
 
 ```bash
-git clone git@github.com:ZhanluModelSim/sim-platform-.git sim-platform
+git clone git@github.com:ZhanluModelSim/sim-platform.git sim-platform
 git clone git@github.com:ZhanluModelSim/inference-models-simulator.git inference-models-simulator
 git clone git@github.com:ZhanluModelSim/operator-performance-models.git operator-performance-models
 git clone --branch codex/simulator-titan030 \
@@ -39,9 +39,9 @@ git clone --branch codex/simulator-titan030 \
   torchtitan-npu-simulator
 ```
 
-这些仓库需要相应的 GitHub SSH 访问权限。若目录已存在，先检查其状态，不重复 clone 或覆盖。平台远端目前为 `sim-platform-`（末尾有连字符），本地保持约定名称 `sim-platform`；尚未修改远端名称，后续若更名需同步 origin 和本文命令。
+这些仓库需要相应的 GitHub SSH 访问权限。若目录已存在，先检查其状态，不重复 clone 或覆盖。平台远端已由用户更名为 `sim-platform`，与本地目录名称一致。
 
-2026-10-30 接入检查：三个新仓库均无提交或跟踪文件，没有 README、AGENTS.md、许可证、包配置或 CI；尚未开发业务代码。建议首先补齐各仓职责说明、协作约定和忽略规则；许可证由项目明确选择。平台随后按单发行包布局初始化，推理与预测仓的具体接口及工程依赖待需求明确后确定，不提前建立统一训练／推理入口或共享契约包。
+2026-10-30 接入与初始化：三个新仓库均已克隆，本轮仅编写各自的职责 README，说明分工与尚待明确的问题。未建立实现文档、接口契约、工程骨架、CI 或新的开发约定；具体细节继续讨论后再确定。
 
 当前接入基线为 `dc2b6f7a21082bb74c001fb4e05b9fe5ff9cc526`。分支可能继续移动；需要复现本轮源码时，可在训练仓库无本地改动的前提下执行：
 
