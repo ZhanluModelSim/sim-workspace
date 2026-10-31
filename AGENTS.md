@@ -138,3 +138,7 @@ SimWorkspace/
 ### 2026-10-31 预测输出与通信字节职责收敛
 
 算子仓Estimate仅返回duration_us及keyword-only synthetic/details，移除category/resources；分类与执行资源由平台决定，未命中规则默认vec，不由预测模型补分类；节点和OpFeatures移除重复kind。平台不再读取/校验/传递上游communication_input_bytes或事件volume_bytes，不保留Communication.input_bytes；通信工作量由后续算子语义解析和模型计算。保留张量参数顺序、shape/dtype等语义事实及通信组/rank/owner。平台公共负载快照升级v3并拒绝v1/v2。训练仓假后端或捕获逻辑清理是后续任务，本轮不改训练仓。
+
+### 单任务日志（2026-10-31）
+
+统一训练入口默认在 training.output_dir 写 task.log；每个任务使用独立目录，无 inherit 或集中大文件。平台入口管理日志会话，子仓使用标准 logging，不反向依赖平台；会话收集 logging、Python warnings 和 print，结束后恢复进程设置。原生 C/C++／FD／子进程输出不实现，也不列为日志功能待办。批量／寻优将来负责目录和 worker 生命周期，不要求 worker 继承父进程 handler。底层评估接口只发日志，不创建会话。详情以平台 docs/task-logging.md 为准。
