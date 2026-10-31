@@ -126,3 +126,11 @@ SimWorkspace/
 ### 公共算子名称与分类（最新确认）
 
 公共图以 PascalCase 简化名称供 costmodel 匹配，移除框架命名空间和 overload 后缀，同时保留 raw_name 调试。初期覆盖常见 ATen/CANN 与实际训练样本，可迭代扩展规则。核心 category 为 mix、cube、vec、comm、h2d、d2h、control、zero，未知保持 unknown。mix 默认同时需要 cube 与 vec；类别、耗时、资源需求独立表达。control 是独立类别，默认零耗时零资源；View 等纯元数据操作归 zero，默认也不需要资源。零耗时节点可显式请求资源，但不能凭空产生持续占用时间；依赖始终保留。不可将可能搬运数据的 reshape、contiguous、copy 一概标为 zero。
+
+### 2026-10-31 硬件配置确认与实现
+
+平台仓根 hardware/chip/ 保存可编辑 JSON；支持名称、文件名和显式外部路径，name 必须与文件 stem 一致，不扫描匹配。平台负责 schema、加载、选择与来源，算子仓只声明独立的不可变能力消费接口，不读取配置文件或反向导入平台。chip 包含按位宽索引的 cube/vec 峰值、HBM capacity_gb 与 bandwidth_tb_per_second（十进制），利用率为常数或 clamp(k*ln(原始 FLOPs/bytes)+b)。缺失位宽不自动替代，零工作量不求 log(0)。硬件在任务入口捕获前固定，负载仓不需要硬件，预测器接收完整能力并参与缓存键。与 vec_scale 同时启用会叠加。topo、多硬件选择策略和完整 roofline 算子模型不在本轮实现范围；HBM 带宽不替代通信或主机传输带宽。详见平台 hardware/README.md。
+
+### 平台职责分层
+
+平台包现按 api/frontend/graph/hardware/backend/config/results 组织，仍为单 wheel。公共图独立于负载适配与执行；入口编排消费各层，后端不反向依赖入口；任务参数归 config，最终结果归 results，领域结果留在后端模块。未实现的结果导出和通用工具不预建。当前路径以平台 docs/architecture.md 第 2 节和本仓 AGENTS.md 为准。
