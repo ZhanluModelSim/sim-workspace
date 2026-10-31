@@ -139,3 +139,9 @@ fallback 的“不支持／输入非法／运行失败”分类、触发条件�
 - MoE 与 offload 的具体对齐需真实训练负载；本轮不运行训练、不编写接口或业务代码。
 
 后续实现应先核对本文状态与 [AGENTS.md](../AGENTS.md)，经新讨论确认的细节再分别落实到组件文档。
+
+## 2026-10-31 最新确认：预测与分类解耦
+
+costmodel不承担算子分类和执行资源计划，Estimate移除category/resources，仅返回耗时、synthetic标记和预测明细。平台按名称及图语义自行分类并决定执行资源；最新确认未命中名称规则默认vec，不通过预测结果补分类；节点及OpFeatures移除重复kind。已有图上resource_requirements是平台显式执行要求，不是训练仓分类输出。
+
+不再信任或消费上游communication_input_bytes、事件volume_bytes等派生统计，公共图删除input_bytes，预测输入也移除相应属性。后续通信adaptor按张量参数角色、shape/dtype和通信语义提取工作量，模型再计算成本；当前不实现通信/topo公式。训练仓内假后端和派生统计清理留待后续。

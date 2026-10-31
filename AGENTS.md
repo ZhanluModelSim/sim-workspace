@@ -125,7 +125,7 @@ SimWorkspace/
 
 ### 公共算子名称与分类（最新确认）
 
-公共图以 PascalCase 简化名称供 costmodel 匹配，移除框架命名空间和 overload 后缀，同时保留 raw_name 调试。初期覆盖常见 ATen/CANN 与实际训练样本，可迭代扩展规则。核心 category 为 mix、cube、vec、comm、h2d、d2h、control、zero，未知保持 unknown。mix 默认同时需要 cube 与 vec；类别、耗时、资源需求独立表达。control 是独立类别，默认零耗时零资源；View 等纯元数据操作归 zero，默认也不需要资源。零耗时节点可显式请求资源，但不能凭空产生持续占用时间；依赖始终保留。不可将可能搬运数据的 reshape、contiguous、copy 一概标为 zero。
+公共图以 PascalCase 简化名称供 costmodel 匹配，移除框架命名空间和 overload 后缀，同时保留 raw_name 调试。初期覆盖常见 ATen/CANN 与实际训练样本，可迭代扩展规则。核心 category 为 mix、cube、vec、comm、h2d、d2h、control、zero；最新确认未命中规则默认vec，不再保存节点kind或unknown类别。mix 默认同时需要 cube 与 vec；类别、耗时、资源需求独立表达。control 是独立类别，默认零耗时零资源；View 等纯元数据操作归 zero，默认也不需要资源。零耗时节点可显式请求资源，但不能凭空产生持续占用时间；依赖始终保留。不可将可能搬运数据的 reshape、contiguous、copy 一概标为 zero。
 
 ### 2026-10-31 硬件配置确认与实现
 
@@ -134,3 +134,7 @@ SimWorkspace/
 ### 平台职责分层
 
 平台包现按 api/frontend/graph/hardware/backend/config/results 组织，仍为单 wheel。公共图独立于负载适配与执行；入口编排消费各层，后端不反向依赖入口；任务参数归 config，最终结果归 results，领域结果留在后端模块。未实现的结果导出和通用工具不预建。当前路径以平台 docs/architecture.md 第 2 节和本仓 AGENTS.md 为准。
+
+### 2026-10-31 预测输出与通信字节职责收敛
+
+算子仓Estimate仅返回duration_us及keyword-only synthetic/details，移除category/resources；分类与执行资源由平台决定，未命中规则默认vec，不由预测模型补分类；节点和OpFeatures移除重复kind。平台不再读取/校验/传递上游communication_input_bytes或事件volume_bytes，不保留Communication.input_bytes；通信工作量由后续算子语义解析和模型计算。保留张量参数顺序、shape/dtype等语义事实及通信组/rank/owner。平台公共负载快照升级v3并拒绝v1/v2。训练仓假后端或捕获逻辑清理是后续任务，本轮不改训练仓。
