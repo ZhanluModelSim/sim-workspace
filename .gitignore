@@ -11,6 +11,7 @@
 
 # Local tool state, credentials, environments, and generated run artifacts.
 /.codex/
+/.vscode/
 /.aws/
 /.agents/local/
 /.venv/

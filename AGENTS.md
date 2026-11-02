@@ -95,6 +95,10 @@ SimWorkspace/
 
 本次确认替代此前激活 offload 仅做平台窗口后处理的计划：训练仓插入传输节点、等待依赖并修正静态显存，平台负责传输耗时和 DES；MBU 分子保持不变。优化器卸载不在本次范围。用户已批准开始实现，并确认保留独立 F/B 阶段：利用 B 内预取窗口，没有窗口则在 B 入口显式加载，不跨阶段延续异步传输。新增传输归为 h2d/d2h，自然参与 DES、掩盖和统计，不再额外补同一传输的拖尾。证据和实现说明见[训练仓激活 offload 文档](torchtitan-npu-simulator/experiments/simulator/docs/activation-offload-design.md)。
 
+### 2026-11-02 优化器卸载补充确认
+
+优化器状态卸载现已单独获准实现，与激活卸载独立开关。训练仓按实际本卡状态量生成双向传输和更新窗口依赖，直接交付不含优化器状态的 F/B/O 静态峰值（用户明确忽略逐 tensor 搬运缓冲）；原始状态总量仍保留。平台用单向带宽、独立 h2d/d2h 资源与 DES 实现全双工充分流水近似：更新窗口耗时为 max(H2D、原更新路径、D2H)，不改 AdamW 原耗时、不重复补偿、不乘 GA。更新窗口不扩大为整个 O 阶段，激活驻留修正保留；两种卸载的传输均不增加 MBU 分子。详细口径见 docs/backend-requirements.md 最新章节。
+
 - 平台按单发行包 `pyproject.toml + src/sim_platform/` 规划；内部图处理、DES、指标等不各自发布，不创建 `packages/` 多发行包骨架。
 - 共享 `sim_contracts` 包需实际共享需求与明确评审决定，不预建。初期由平台适配器对接组件的窄接口。
 - 训练与推理发生器独立演进，允许不同内部结构、捕获实现和环境，不强制共用捕获框架，不导入平台内部实现。
@@ -146,3 +150,5 @@ SimWorkspace/
 ### 单任务日志（2026-10-31）
 
 统一训练入口默认在 training.output_dir 写 task.log；每个任务使用独立目录，无 inherit 或集中大文件。平台入口管理日志会话，子仓使用标准 logging，不反向依赖平台；会话收集 logging、Python warnings 和 print，结束后恢复进程设置。原生 C/C++／FD／子进程输出不实现，也不列为日志功能待办。批量／寻优将来负责目录和 worker 生命周期，不要求 worker 继承父进程 handler。底层评估接口只发日志，不创建会话。详情以平台 docs/task-logging.md 为准。
+
+后续 topo 完成后，platform.transfers 作为过渡配置须迁移为 topo 配置及相应传输带宽／耗时工具 API，统一服务激活和优化器卸载。具体接口与兼容策略届时收敛；迁移要求见 docs/backend-requirements.md。
