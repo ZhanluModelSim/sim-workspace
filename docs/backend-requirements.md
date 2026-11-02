@@ -201,3 +201,9 @@ MFU为cube类算子的纯理论计算时间除端到端仿真时间：按dtype�
 - 当前串行训练按图调用次数应用变化：F/B 为 GA，O 一次；整次迭代变化只应用一次。公共组件不内置训练权重。未来重叠 L2 不能直接沿用此加法。
 - 吞吐、MFU/HFU/MBU 使用最终时间；算子／通信暴露占比和 idle 守恒使用原 DES 归因分母。CSV/Trace 与单次 F/B/O 时长仍来自原 DES。
 - 结果仅在存在后处理记录时附加基线、变化记录和时间线口径；顶层仍只保留 end_to_end_us。处理器通过 Python API 显式注入，不增加 CLI 动态导入或虚构默认折减规则。
+
+## 2026-11-02 统一训练配置补齐
+
+统一入口补齐训练仓已有能力，不新增训练语义或算子公式：TOML 的 `training.model_overrides` 及嵌套 `moe_args` 按叶子复写模型参数，`training.selective_ac_save_ops` 选择原生 selective AC 保存组；CLI `--set` 和 Python overrides 沿用相同 dotted-key 优先级。列表整体替换，省略与空列表、显式 false/0 均须区分。平台只做配置类型和结构校验，原生配置类型在执行边界构造，模型几何交叉校验由训练仓完成。当前模型覆盖限训练仓支持的 DeepSeek V4 预设，不声明适用于 Kimi 或任意工厂。
+
+算子配置使用 `prediction.roofline.vec` 接入算子仓已有 `VecRooflineConfig`，保留已有 `prediction.overhead_us`；只透传显式位宽与等效运算量，不设经验默认系数，不开发公式。参数随已有后端 configuration 纳入缓存键。配置查询无需导入训练框架，任务快照保持不可变；结果中请求覆盖与上游实际事实继续分开。
