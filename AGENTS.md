@@ -152,3 +152,7 @@ SimWorkspace/
 统一训练入口默认在 training.output_dir 写 task.log；每个任务使用独立目录，无 inherit 或集中大文件。平台入口管理日志会话，子仓使用标准 logging，不反向依赖平台；会话收集 logging、Python warnings 和 print，结束后恢复进程设置。原生 C/C++／FD／子进程输出不实现，也不列为日志功能待办。批量／寻优将来负责目录和 worker 生命周期，不要求 worker 继承父进程 handler。底层评估接口只发日志，不创建会话。详情以平台 docs/task-logging.md 为准。
 
 后续 topo 完成后，platform.transfers 作为过渡配置须迁移为 topo 配置及相应传输带宽／耗时工具 API，统一服务激活和优化器卸载。具体接口与兼容策略届时收敛；迁移要求见 docs/backend-requirements.md。
+
+### 2026-11-02 统一修正与时延口径
+
+以平台 docs/postprocessing.md 为准：vec 在 DES 前修正并保留节点证据；激活和优化器卸载已在执行图内，不重复补偿。DES 后处理输出具名、带版本和依据的不可变变化记录；从原始基线纯汇总最终时延，拒绝重复 ID，不改原时间线。当前串行训练 F/B 图变化乘 GA、O 一次、iteration 变化一次；公共汇总不绑定训练，未来重叠 L2 需另行设计。吞吐及 MFU/HFU/MBU 用最终时延，算子／通信占比和 idle 守恒用原 DES 分母。无后处理时保留原数值及简洁 JSON；有记录才输出后处理明细。旧窗口分析保留为独立工具，主任务不再接受旧窗口自动补偿参数。MoE 具体规则仍待确认，本轮不实现。
