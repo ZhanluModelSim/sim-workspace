@@ -160,3 +160,18 @@ SimWorkspace/
 ### 统一入口的模型与 selective AC 覆盖
 
 训练 TOML/CLI/Python 使用同一按叶子覆盖规则，支持 training.model_overrides（含 moe_args）、selective_ac_save_ops 及 prediction.roofline.vec 的既有模型参数。模型覆盖限上游支持的 DSV4 预设，几何重建与最终交叉校验仍归训练仓；平台配置加载不导入 torch，执行时才构造原生类型。空列表与省略不等价，未知字段/不支持的组/缺少必填模型系数明确拒绝。算子参数只透传已有配置，不补经验默认或开发公式；来源查询、缓存身份与请求/实际结果区分须一并验证。
+
+### GA 通信核对范围
+
+平台 docs/ga-communication-audit.md 记录连续真实Meta F/B检查。所测DSV4通信可复用；Kimi有首用/后续head allgather差异，现有模板仍存在准确性限制，不能因流程可运行视为已解决。后续先确认首迭代/稳态口径，再决定模板策略；本轮未改生产代码，完整端到端优化场景验收暂缓。
+
+### 首用与稳态进一步核对
+
+Kimi差异已定位为chunked loss未恢复原reshard策略的实现问题，优先修复责任边界内的策略恢复再复测。优化器首O则包含正常惰性状态初始化，后续更新复用状态；需区分首轮与稳态捕获，不能按zeros/empty/fill名称过滤，也不能误删每轮计数重置或减少状态驻留/卸载量。证据见平台docs/optimizer-first-use-audit.md，本轮未改生产逻辑。
+
+
+## 2026-11-02 Kimi 修复与默认预热捕获
+
+此项替代此前“尚未修复／待选首轮稳态”的状态：训练仓已作用域恢复chunked loss临时修改的FSDP策略；simulate默认同模型/优化器按实际GA做一次无捕获预热，再捕获单microbatch F/B及O，L2仍按GA展开。预热清梯度、不推进scheduler、不改training.steps；这是结构预热，不宣称数值意义的真实第二训练步。底层run_simulation_step不自动预热。既存optimizer状态按storage去重进入初始内存，不能因初始化算子消失而漏掉驻留或卸载量。平台透传实际capture事实，旧快照不补造。实现边界见训练仓experiments/simulator/docs/steady-state-capture.md，验收见平台docs/development-status.md。
+
+预热自身性能应使用实际墙钟单独测量，区分负载生成simulate、含导入的进程耗时和被仿真训练时延。当前小模型测量与范围见训练仓experiments/simulator/docs/steady-state-capture.md；不得把预热直接耗时解释为相对旧捕获的净增加或完整模型性能承诺。

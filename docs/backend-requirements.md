@@ -207,3 +207,16 @@ MFU为cube类算子的纯理论计算时间除端到端仿真时间：按dtype�
 统一入口补齐训练仓已有能力，不新增训练语义或算子公式：TOML 的 `training.model_overrides` 及嵌套 `moe_args` 按叶子复写模型参数，`training.selective_ac_save_ops` 选择原生 selective AC 保存组；CLI `--set` 和 Python overrides 沿用相同 dotted-key 优先级。列表整体替换，省略与空列表、显式 false/0 均须区分。平台只做配置类型和结构校验，原生配置类型在执行边界构造，模型几何交叉校验由训练仓完成。当前模型覆盖限训练仓支持的 DeepSeek V4 预设，不声明适用于 Kimi 或任意工厂。
 
 算子配置使用 `prediction.roofline.vec` 接入算子仓已有 `VecRooflineConfig`，保留已有 `prediction.overhead_us`；只透传显式位宽与等效运算量，不设经验默认系数，不开发公式。参数随已有后端 configuration 纳入缓存键。配置查询无需导入训练框架，任务快照保持不可变；结果中请求覆盖与上游实际事实继续分开。
+
+## 2026-11-02 GA 通信核对
+
+真实连续4次F/B检查显示：当前原生非PP循环无GA级no_sync切换，所测DSV4的FSDP/HSDP、EP及AC组合通信序列一致；Kimi selective的F allgather为7/8/8/8，B一致。独立观测定位到chunked loss改变norm/lm_head联合组reshard_after_forward策略，属于首用与后续状态差异，不是末次梯度同步。GA4首模板重复少3次AG，不能直接换算时延误差。修复前需确认首迭代或稳态预测口径；本轮不改模板或上游行为。另记录原生每迭代一次valid-token allreduce未纳入当前静态计数捕获。详情见平台docs/ga-communication-audit.md。完整训练优化场景验收暂缓。
+
+## 2026-11-02 O 首用核对与 Kimi 实现问题
+
+进一步检查确认Kimi chunked loss无条件把head reshard_after_forward恢复为True，而非调用前值，优先按实现中的策略恢复问题处理，不能靠平台补AG。真实连续三次更新显示DSV4/Kimi的fused AdamW仅首轮创建step与动量状态；每轮MoE计数zero_、clip和更新仍执行。当前首O不能冒充稳态；后续若选择稳态预测，由训练侧明确初始化/捕获边界，不按算子名删除，也不改变真实状态驻留与卸载总量。本轮仅测试和记录，生产逻辑未修。详见平台docs/optimizer-first-use-audit.md。
+
+
+## 2026-11-02 Kimi 修复与默认预热捕获
+
+此项替代此前“尚未修复／待选首轮稳态”的状态：训练仓已作用域恢复chunked loss临时修改的FSDP策略；simulate默认同模型/优化器按实际GA做一次无捕获预热，再捕获单microbatch F/B及O，L2仍按GA展开。预热清梯度、不推进scheduler、不改training.steps；这是结构预热，不宣称数值意义的真实第二训练步。底层run_simulation_step不自动预热。既存optimizer状态按storage去重进入初始内存，不能因初始化算子消失而漏掉驻留或卸载量。平台透传实际capture事实，旧快照不补造。实现边界见训练仓experiments/simulator/docs/steady-state-capture.md，验收见平台docs/development-status.md。
