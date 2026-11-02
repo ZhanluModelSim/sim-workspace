@@ -153,3 +153,11 @@ MFU为cube类算子的纯理论计算时间除端到端仿真时间：按dtype�
 ## 最新修正：区分 HFU 与 MFU（2026-11-02）
 
 此前全部cube理论时间除端到端时间的计算归为HFU；MFU排除上游标记recompute的cube FLOPs，仍使用完整端到端分母。MBU保留所有读写，包括重算访存。公共图已保留execution_kind，指标转换仅判断是否等于recompute，省略默认非重算，兼容推理。训练全部／重算工作量均按(F+B)*GA+O展开。此确认替代前节MFU未排除重算的定义；独立指标组件暂不接主流程。
+
+## 训练统计确认（2026-11-02）
+
+训练只统计单卡token吞吐：实际GBS*上游seq_len/总卡数/最终端到端秒数，seq_len加入公共训练事实（替代早期从请求读取的方案）。Top算子按name和name+shape/dtype两种公共分组，训练以F/B乘GA、O乘1的权重输入，不复制算子行。通信域统计串行时间和、优先级掩盖后的暴露时间和及占比。算子／通信统计不包含offload后处理拖尾；idle可当作独立算子记录，使正时长下总暴露占比为100%。端到端时延及吞吐使用最终耗时，统计分母使用DES阶段加权时长。
+
+训练汇总改为training.json，分config/results；配置区保留归一上游事实、请求、平台设置和字段来源。seq_len来自上游正式dataloader输入描述，缺失不可用请求冒充。模型仅标识与回传的显式reported_overrides，不保存完整默认配置树。
+
+最新结果展示收敛：training.json先results后config；展示不输出sources，内部来源仍保留。chip和未来topo仅名称或绝对路径。统一入口接入MFU/HFU/MBU，缺失工作量明确不可用；静态显存从上游内存对象直接写入results.memory，不依赖mem文件。
