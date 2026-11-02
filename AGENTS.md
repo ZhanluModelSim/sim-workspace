@@ -91,6 +91,10 @@ SimWorkspace/
 
 ## 架构与工程边界
 
+### 2026-11-02 激活 offload 职责更新
+
+本次确认替代此前激活 offload 仅做平台窗口后处理的计划：训练仓插入传输节点、等待依赖并修正静态显存，平台负责传输耗时和 DES；MBU 分子保持不变。优化器卸载不在本次范围。用户已批准开始实现，并确认保留独立 F/B 阶段：利用 B 内预取窗口，没有窗口则在 B 入口显式加载，不跨阶段延续异步传输。新增传输归为 h2d/d2h，自然参与 DES、掩盖和统计，不再额外补同一传输的拖尾。证据和实现说明见[训练仓激活 offload 文档](torchtitan-npu-simulator/experiments/simulator/docs/activation-offload-design.md)。
+
 - 平台按单发行包 `pyproject.toml + src/sim_platform/` 规划；内部图处理、DES、指标等不各自发布，不创建 `packages/` 多发行包骨架。
 - 共享 `sim_contracts` 包需实际共享需求与明确评审决定，不预建。初期由平台适配器对接组件的窄接口。
 - 训练与推理发生器独立演进，允许不同内部结构、捕获实现和环境，不强制共用捕获框架，不导入平台内部实现。
