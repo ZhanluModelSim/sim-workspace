@@ -1,8 +1,8 @@
 # SIMPlatform 设计评审资料包
 
-本目录保留启动评审与原型的历史资料。当前工作区目录名已统一为 `sim-platform`、`torchtitan-npu-simulator`、`inference-models-simulator`、`operator-performance-models`；正文中的旧名保留作历史上下文。最新布局见[工作区 README](../../../README.md)，后续确认及推理侧未决问题见[工作区 AGENTS.md](../../../AGENTS.md)，其优先于早期建议。
+本目录保留启动评审与原型的历史资料。当前工作区目录名已统一为 `sim-platform`、`torchtitan-npu-simulator`、`inference-models-simulator`、`operator-performance-models`；正文中的旧名保留作历史上下文。最新布局见[工作区 README](../../../README.md)，当前职责见[跨仓边界](../../backend-requirements.md)，未决事项见[跨仓待办](../../roadmap.md)，实现方案见[平台架构](../../../sim-platform/docs/architecture.md)。它们优先于本目录的早期建议。
 
-建议阅读顺序：
+仅在追溯启动设计时阅读以下资料，不作为开发前置要求：
 
 1. [架构与协同开发方案](架构与协同开发方案.md)及 [SVG 架构图](architecture.svg)。
 2. [DES 设计与开发建议](DES设计与开发建议.md)。

@@ -6,7 +6,7 @@
 
 新 Python 包采用 `pyproject.toml`、`src/<package>/`、`tests/` 和明确的 wheel 边界。推荐 pytest、Ruff format/lint 与 mypy strict；使用项目开发依赖中的工具版本，在仓库内执行检查。
 
-当前新仓推荐配置：行宽 100，Ruff 规则 E/F/I/UP/B，mypy 对 src 严格检查。Ruff target-version 与项目最低 Python 版本一致，不能为了统一工具配置擅自提高运行环境要求。平台与算子仓当前最低版本为 Python 3.12；推理仓初始化时依据框架环境决定。训练仓沿用现有 120 列及 pre-commit，不全仓重新格式化。
+当前新仓推荐配置：行宽 100，Ruff 规则 E/F/I/UP/B，mypy 对 src 严格检查。Ruff target-version 与项目最低 Python 版本一致，不能为了统一工具配置擅自提高运行环境要求。各仓最低 Python 版本和依赖以其当前 pyproject.toml 及运行环境为准，不在管理仓重复维护。训练仓沿用现有 120 列及 pre-commit，不全仓重新格式化。
 
 ```bash
 ruff format --check .
