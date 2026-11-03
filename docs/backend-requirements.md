@@ -36,7 +36,7 @@
 - 训练仓生成激活/优化器双向传输与等待依赖，修正最终静态内存；平台只计算传输时间、运行 DES 和消费预算。两种卸载独立开关，不将传输时间改写为 AdamW 时间，也不重复补窗口拖尾或扣显存。
 - 平台 `platform.transfers` 为过渡配置；后续 topo 完成时，两种卸载共同切换到 topo 配置及带宽/耗时工具 API。迁移须覆盖配置来源、结果引用和旧配置兼容，不使用 HBM 带宽替代链路带宽。
 - L1 负责单图，L2 负责阶段实例及跨阶段依赖。当前训练按 GA 串行复用 F/B 后执行一次 O，不据此承诺 PP、跨阶段异步执行或推理循环。
-- vec 修正在 DES 前，保留原始预测和执行成本；DES 后处理保留原时间线与具名变化记录。MoE A2A 预定在 DES 后处理，具体匹配/折减规则仍待确认。
+- vec 修正在 DES 前，保留原始预测和执行成本；DES 后处理保留原时间线与具名变化记录。MoE A2A 修正用于近似替代 MegaMoE，不接入独立 MegaMoE 实现；按最新确认在 DES 之前处理。先按层级 FQN、执行类型及通信依赖提取片段，区分原始前向、重算和梯度反向；两种系数均表示缩减比例、默认 0 且范围 [0,1]；MoE 按该比例对 min(通信串行和, vec 修正后计算串行和) 分摊折减，只改 DES 耗时，不改工作量；见[平台 DES 前修正](../sim-platform/docs/pre-des-corrections.md)。
 
 卸载近似与适用范围由[训练激活方案](../torchtitan-npu-simulator/experiments/simulator/docs/activation-offload-design.md)、[平台激活接入](../sim-platform/docs/activation-offload.md)、[优化器接入](../sim-platform/docs/optimizer-offload.md)维护；修正及分母由[平台后处理](../sim-platform/docs/postprocessing.md)维护。指标公式和 GA 加权由[指标组件](../sim-platform/docs/utilization-metrics.md)与[训练统计](../sim-platform/docs/training-statistics.md)维护，不再在本页复制。
 
