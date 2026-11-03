@@ -44,7 +44,7 @@
 
 进程共享对象仅管理默认设置；任务固定独立配置快照，不能让候选任务互相覆盖。CLI/Python 使用相同加载路径，来源可查询；具体优先级见[统一入口](../sim-platform/docs/training-task-entrypoint.md)。组件通过参数获得所需配置，不导入平台单例。
 
-平台管理每任务独立目录及 task.log，子仓发标准日志；未来批量/寻优负责 worker 与目录分配，不汇总成一个大日志、不要求 inherit。Python 日志接管不包含原生 FD/C++/子进程输出，后者不列为待办，见[任务日志](../sim-platform/docs/task-logging.md)。
+平台管理每任务独立目录及 task.log，子仓发标准日志；批量执行按任务起独立进程并注入目录，不汇总成一个大日志、不要求 inherit，见[批量执行](../sim-platform/docs/batch-execution.md)。Python 日志接管不包含原生 FD/C++/子进程输出，后者不列为待办，见[任务日志](../sim-platform/docs/task-logging.md)。
 
 组件独立安装/发布；平台单向验证精确组合，根仓不维护第二份锁定清单。运行环境可以不同，不能因为共享工作区就假定训练/推理依赖可合装。版本与协作规则见[公共规范](workspace-conventions.md)。
 
