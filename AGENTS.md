@@ -175,3 +175,15 @@ Kimi差异已定位为chunked loss未恢复原reshard策略的实现问题，优
 此项替代此前“尚未修复／待选首轮稳态”的状态：训练仓已作用域恢复chunked loss临时修改的FSDP策略；simulate默认同模型/优化器按实际GA做一次无捕获预热，再捕获单microbatch F/B及O，L2仍按GA展开。预热清梯度、不推进scheduler、不改training.steps；这是结构预热，不宣称数值意义的真实第二训练步。底层run_simulation_step不自动预热。既存optimizer状态按storage去重进入初始内存，不能因初始化算子消失而漏掉驻留或卸载量。平台透传实际capture事实，旧快照不补造。实现边界见训练仓experiments/simulator/docs/steady-state-capture.md，验收见平台docs/development-status.md。
 
 预热自身性能应使用实际墙钟单独测量，区分负载生成simulate、含导入的进程耗时和被仿真训练时延。当前小模型测量与范围见训练仓experiments/simulator/docs/steady-state-capture.md；不得把预热直接耗时解释为相对旧捕获的净增加或完整模型性能承诺。
+
+
+## 2026-11-03 预测容错与部分建模指标（最新确认）
+
+本项替代此前“缺预测直接结束／工作量不完整则不输出指标”的默认策略。只建模主要算子是常态，不要求100%覆盖。
+
+- 节点预测耗尽fallback仍不支持记miss，解析/模型执行失败记fail，记录日志和节点状态，以零耗时继续DES；保留原类别和全部依赖，不伪装成成功zero算子。失败不写预测缓存，缺失工作量不编造为模型明细。
+- MFU/HFU/MBU使用已知模型工作量，沿用既有位宽峰值、GA权重、重计算排除、卸载流量排除和最终时延分母，正常输出数值。覆盖不完整单独标记，不以缺模型为由置null；零分母等数学不可用条件仍明确报告。不能把此数值声称为完整覆盖或真实设备精度。
+- 配置、路由、图结构等任务错误仍拒绝，不用预测容错掩盖。节点状态进入结果和导出，覆盖计数明确模板范围，不与GA实例数混淆。
+- 上游信息此次只补AdamW原生输入身份：六组TensorList边界、尾部可选张量角色。其他标量/索引/融合角色/通信归约字段暂不扩展，等实际costmodel需求再添加；不按shape推测、不读取Meta运行时值。
+
+组件实现说明归平台docs/prediction-tolerance.md及训练仓experiments/simulator/docs/adamw-input-identity.md，验收状态见平台docs/development-status.md。
