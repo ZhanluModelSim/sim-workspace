@@ -67,13 +67,16 @@
 
 2026-11-03 起平台改为[预测容错](../sim-platform/docs/prediction-tolerance.md)：缺模型或模型异常以零耗时继续 DES，覆盖计数写进结果，不再中断任务。因此约束**不再是"跑不出结果"，而是"结果只代表已建模部分"**。
 
-同日拉取最新上游后实测更严峻：`success=0 / miss=2032 / fail=0`，端到端时延为 0，`utilization_unavailable` 报 "End-to-end latency is zero"。全部 miss 的错误都是同一句 `roofline: Unsupported attributes: ['input_tensor_bindings']`——训练仓在 `capture/operator_arguments.py` 把所有算子的参数名绑定写进节点属性，算子仓 `adaptors/_common.py` 的属性白名单还没接收它。这是跨仓契约待对齐项，不属于批量特性，当前仍未解决。
+同日拉取最新上游后实测更严峻：`success=0 / miss=2032 / fail=0`，端到端时延为 0，`utilization_unavailable` 报 "End-to-end latency is zero"。全部 miss 的错误都是同一句 `roofline: Unsupported attributes: ['input_tensor_bindings']`——训练仓在 `capture/operator_arguments.py` 把所有算子的参数名绑定写进节点属性，算子仓 `adaptors/_common.py` 的属性白名单还没接收它。该契约已由算子仓修复（原生绑定保留并在 adaptor 解析中使用，算子仓 `499b358`），同一组合重跑后 `success=275 / miss=1753 / fail=4`，时延与 MFU/HFU/MBU 都有值，`rankable=6`；剩余 miss 是尚未建模的算子族，覆盖不完整仍以 `*` 标注。后续算子模型扩展（逐元素与搬运算子）后
+覆盖显著提高：demo 批次 `1188/420/0`、V4 Pro `27070/7854/0`，见
+[平台批量执行验证](../sim-platform/docs/batch-execution-verification.md) §15.2。
 
 对三条需求的影响：
 
 - 批量可以正常跑通，`ok` 与 `failed` 只反映任务是否完成，不反映覆盖高低；
-- 汇总与排行已按"零时延不参与排行"实现（见第 7.3 节），所以当前跑出来的批次会显示"无可排行任务"而不是伪造第一二名；
-- 寻优暂缓：在 0 覆盖状态下即便有搜索器，目标函数也全是 `null`，选不出任何候选。
+- 汇总与排行已按"零时延不参与排行"实现（见第 7.3 节）：缺模型的任务只列状态、不排名；属性契约修复后任务有真实时延，可正常参与排行，覆盖不完整以 `*` 标注；
+- 寻优暂缓：覆盖仍不完整（当时静态估算约 13.5%，算子模型扩展后 demo 批次约 74%、V4 Pro 约 77.5%），
+  目标函数只反映已建模部分，此时搜索出的"最优"没有实际意义。
 
 本文不把"覆盖不足"当作不做的理由，但**不允许**把"跑完 60 个候选"写成寻优可用（对应 FEAT-023 与清单 K24 的口径要求）。
 
@@ -131,30 +134,27 @@
 
 没有独立 worker 层：worker 就是既有的 `sim-platform train`。因此不需要 worker 协议、`plan.json` 或每任务 `status.json`，也不需要另建一条执行路径。
 
-### 6.2 清单只引用任务文件
+### 6.2 一个批量文件，参数用扫描表达式
+
+批量执行不再"一个任务一个文件 + 一份清单"。现在只写一个 TOML：`[batch]` 段放批次设置，
+任务段里把要变的参数写成 `["enum", [...]]` 或 `["stride", 起, 止, 步]`（止值含在内），
+批量层按笛卡尔积展开，其余参数原样保留；每个组合物化成任务目录下的 `task.toml` 再交给单任务入口。
 
 ```toml
-schema_version = 1
-batch_id = "smoke-20261103"         # 可选，默认取文件名
-output_dir = "../runs/batch-smoke"  # 相对清单目录
+[batch]
+output_dir = "../runs/batch-smoke"   # 相对文件所在目录
+max_workers = 3
 
-[execution]
-max_workers = 3         # 可选，默认 min(4, CPU 数, 任务数)
-timeout_seconds = 1800  # 可选，单次尝试的墙钟上限
-retry = 0               # 可选，补充尝试次数
-
-[[task]]
-id = "seq128-lbs1"
-config = "../sim-platform/examples/training.toml"
-
-[[task]]
-id = "seq256-lbs2"
-config = "../sim-platform/examples/training.toml"
+[training]
+seq_len = ["enum", [128, 256]]
+local_batch_size = ["stride", 1, 3]  # 1, 2, 3
 ```
 
-与草案的差别：**不再支持 `[task.overrides]`**。清单只引用已存在的任务文件，参数变化由调用方先生成任务文件（寻优候选本来就要物化成文件）。这样批量层不必把 TOML 值再序列化回 `--set`，也就没有引号与转义风险。
+改动理由：旧形式下跑 10 组参数要写 10 个几乎相同的文件，公共参数改 10 处，而"目录名 ↔ 参数"
+靠手工 id 维持。扫描表达式让文件本身成为唯一来源，目录名由变动的参数自动生成（`seq_len128-local_batch_size2`）。
 
-校验规则：`schema_version` 必须为 1；`id` 唯一、只允许 `[A-Za-z0-9._-]`、不得为 `.`／`..`（它直接作为输出目录名）；`config` 必须存在，相对清单所在目录解析；未知清单键、`execution` 键、`task` 键一律报错。
+字段、扫描语法、校验规则与退出码全部由平台维护，见[批量执行使用说明](../sim-platform/docs/batch-execution.md)
+与[批量执行设计](../sim-platform/docs/batch-execution-design.md)；本文只保留跨仓决策，不复制字段表。
 
 ### 6.3 目录契约
 
@@ -162,6 +162,7 @@ config = "../sim-platform/examples/training.toml"
 <batch.output_dir>/
   batch.json    # 唯一汇总产物，父进程写
   <task_id>/
+    task.toml   # 该组合展开后的具体参数，批量层写
     worker.log  # 子进程 stdout/stderr，批量层追加
     task.log    # 单任务日志（既有行为）
     l1/         # 单任务导出（成功时）
@@ -180,15 +181,16 @@ config = "../sim-platform/examples/training.toml"
 ```text
 preflight:
   for task in tasks:
-      load_training_task(task.config)     # 不导入训练栈
+      物化 <output_dir>/<id>/task.toml（展开后的具体值）
+      load_training_task(那份 task.toml)   # 不导入训练栈
       失败 → invalid：不派发、不重试
 execute:
-  resume: 上次 batch.json 中为 ok 的跳过（--force 关闭该行为）
+  resume: 上次 batch.json 中为 ok 的跳过（--force 关闭该行为）；id 由变动的参数决定
   ThreadPoolExecutor(max_workers)，每个任务一次 subprocess：
-      python -m sim_platform train <config> --output-dir <output_dir>/<id>
+      python -m sim_platform train <output_dir>/<id>/task.toml --output-dir <output_dir>/<id>
       0.2 s 轮询等待；超时 kill；中断置 stop 标记并 kill
   每完成一个任务重写 batch.json
-exit: 0 全 ok ／ 1 存在失败 ／ 2 清单或参数非法 ／ 130 中断
+exit: 0 全 ok ／ 1 存在失败 ／ 2 批量文件或参数非法 ／ 130 中断
 ```
 
 实现取舍：用 `subprocess` 加线程池，而不是 `ProcessPoolExecutor`（崩溃、超时、stdio 分离都要自己控），但也不自建 watcher 线程与队列——线程池的每个槽位就阻塞在一次 `Popen.wait` 轮询上，超时与中断由同一个 `Event` 驱动。
@@ -308,7 +310,9 @@ constraints = ["static_memory.peak_bytes <= 3.4e9"]
 
 理由：候选必须能脱离寻优器独立重跑、能被 review、能进版本对比。只存"参数组合"会让复现依赖寻优器本身。
 
-随后生成等价于 6.2 的批量清单指向这些候选，交给 `batch run`。
+网格（`grid`）策略不再需要这一步：6.2 的扫描表达式本身就是候选枚举，`batch run` 直接展开。
+只有需要非网格采样（`random`、`grid_then_random`）或跨 `base_config` 的组合时，才把候选物化成
+独立 TOML 再拼成一个批量文件——物化的理由仍是"候选要能脱离寻优器独立重跑、能被 review"。
 
 ### 8.5 策略与预算
 
@@ -331,7 +335,7 @@ constraints = ["static_memory.peak_bytes <= 3.4e9"]
 ### 8.7 闭环
 
 ```text
-sweep 描述 → 生成候选 TOML → 生成批量清单 → batch run
+sweep 描述 → 批量文件（扫描表达式）／或物化候选 TOML → batch run
            → 索引 → 目标求值 + 约束标记 → 排行
            → （可选）下一轮：以当前最优邻域生成新候选
 ```
@@ -344,7 +348,7 @@ sweep 描述 → 生成候选 TOML → 生成批量清单 → batch run
 
 | 产物 | 位置 | 写入者 | 读取者 |
 | --- | --- | --- | --- |
-| 批量清单 | 用户指定 | 用户／寻优器 | 调度器 |
+| 批量文件 | 用户指定 | 用户／寻优器 | 调度器 |
 | `batch.json` | `<batch>/` | 调度器 | 用户、resume、未来的 051 索引器 |
 
 规则与平台现有快照策略一致（[workload-snapshots.md](../sim-platform/docs/workload-snapshots.md) 的 v6 做法）：**未知版本显式拒绝，不猜测、不兼容性降级**。字段只增不改；语义变化必须升版本并在本文件记录替代关系。
@@ -450,18 +454,20 @@ M2 依赖 M1 产物，M3 依赖 M1 与 M2。M2 已用手写目录夹具做单元
 {
   "schema_version": 1,
   "batch_id": "smoke-20261103",
-  "manifest": "/abs/path/batch.toml",
+  "template": "/abs/path/batch.toml",
   "started_at": "2026-11-03T09:00:00+08:00",
   "ended_at": "2026-11-03T09:04:12+08:00",
   "interrupted": false,
   "execution": {"max_workers": 3, "timeout_seconds": 1800, "retry": 1},
   "tasks": [
     {
-      "task_id": "seq128-lbs1",
+      "task_id": "seq_len128-local_batch_size2",
       "status": "failed",
       "reused": false,
       "error": "exit code 2",
-      "output_dir": "/abs/runs/batch-smoke/seq128-lbs1",
+      "sweep": {"seq_len": "128", "local_batch_size": "2"},
+      "config": "/abs/runs/batch-smoke/seq_len128-local_batch_size2/task.toml",
+      "output_dir": "/abs/runs/batch-smoke/seq_len128-local_batch_size2",
       "attempts": [{"attempt": 1, "exit_code": 2, "wall_seconds": 14.175}]
     }
   ]
