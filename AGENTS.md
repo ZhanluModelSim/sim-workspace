@@ -187,3 +187,10 @@ Kimi差异已定位为chunked loss未恢复原reshard策略的实现问题，优
 - 上游信息此次只补AdamW原生输入身份：六组TensorList边界、尾部可选张量角色。其他标量/索引/融合角色/通信归约字段暂不扩展，等实际costmodel需求再添加；不按shape推测、不读取Meta运行时值。
 
 组件实现说明归平台docs/prediction-tolerance.md及训练仓experiments/simulator/docs/adamw-input-identity.md，验收状态见平台docs/development-status.md。
+
+
+## 2026-11-03 训练仓职责清理（最新确认）
+
+训练负载生成默认通过返回的Python对象交付图和静态内存，不再强制写memory/memory_summary.json或打印显存预算；显式output_formats=["mem"]仍可导出摘要与明细。平台直接读取上游内存对象，training.json中的memory输出保持；平台自身日志/结果导出不受此变化影响。
+
+训练仓内部旧cost模型、节点性能字段、图级成本汇总及cost_unknown等性能注记退役，预测只由算子仓/平台负责。保留实际捕获事实与必要负载处理：通信组/ranks/原语、流/事件/alias依赖、recompute/FQN、AdamW输入角色、offload图变换和静态内存估计。metadata_view判定用于stream与生命周期，不能当作无用性能分类删除；内部通信事件/调度slot的源张量容量仍供内存与数据流消费，不等同后端通信预测字节量。下游不再依赖源cost字段；旧快照或外部负载中出现的调试字段仍由平台过滤。
