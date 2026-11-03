@@ -10,9 +10,9 @@
 
 | 编号 | 特性 | 本轮范围 | 清单归属 |
 | --- | --- | --- | --- |
-| FEAT-049 | 批量任务与多进程 worker | **实现中，已完成** | sim-platform |
-| FEAT-050 | 寻优入口与搜索策略 | 暂缓 | sim-workspace |
-| FEAT-051 | 批量汇总、对比和结果检索 | 暂缓 | sim-platform |
+| FEAT-049 | 批量任务与多进程 worker | **已实现** | sim-platform |
+| FEAT-050 | 寻优入口与搜索策略 | 暂缓（用户确认训练场景不做寻优） | sim-workspace |
+| FEAT-051 | 批量汇总、对比和结果检索 | **已实现（索引与排行，简化为只读派生）** | sim-platform |
 
 
 依据：`SIMPlatform｜需求与特性协作清单.xlsx`「需求与特性」表 C 列模块为「规模化编排」的三行（A50–A52），以及本仓 [AGENTS.md](../AGENTS.md)「推进顺序」中阶段 E「批量、资源隔离、寻优、汇总」。
@@ -67,12 +67,13 @@
 
 2026-11-03 起平台改为[预测容错](../sim-platform/docs/prediction-tolerance.md)：缺模型或模型异常以零耗时继续 DES，覆盖计数写进结果，不再中断任务。因此约束**不再是"跑不出结果"，而是"结果只代表已建模部分"**。
 
-同日拉取最新上游后实测更严峻：`success=0 / miss=1608 / fail=0`，端到端时延为 0，`utilization_unavailable` 报 "End-to-end latency is zero"。主因是训练仓开始对所有算子附带 `input_tensor_bindings`，而算子仓适配器按白名单拒收（F 图内 316 个 vec、71 个 matmul 因该属性 miss）；其余为既有缺口（ToCopy 119、RMSNorm 24、Cat 23、A2A 16）。这是跨仓契约待对齐项，不属于批量特性。
+同日拉取最新上游后实测更严峻：`success=0 / miss=2032 / fail=0`，端到端时延为 0，`utilization_unavailable` 报 "End-to-end latency is zero"。全部 miss 的错误都是同一句 `roofline: Unsupported attributes: ['input_tensor_bindings']`——训练仓在 `capture/operator_arguments.py` 把所有算子的参数名绑定写进节点属性，算子仓 `adaptors/_common.py` 的属性白名单还没接收它。这是跨仓契约待对齐项，不属于批量特性，当前仍未解决。
 
 对三条需求的影响：
 
 - 批量可以正常跑通，`ok` 与 `failed` 只反映任务是否完成，不反映覆盖高低；
-- 汇总与寻优可以建，但任何排行都必须显式带上覆盖信息，否则"覆盖更差"会被读成"性能更好"；在当前 0 覆盖状态下，排行没有意义。
+- 汇总与排行已按"零时延不参与排行"实现（见第 7.3 节），所以当前跑出来的批次会显示"无可排行任务"而不是伪造第一二名；
+- 寻优暂缓：在 0 覆盖状态下即便有搜索器，目标函数也全是 `null`，选不出任何候选。
 
 本文不把"覆盖不足"当作不做的理由，但**不允许**把"跑完 60 个候选"写成寻优可用（对应 FEAT-023 与清单 K24 的口径要求）。
 
@@ -219,7 +220,7 @@ exit: 0 全 ok ／ 1 存在失败 ／ 2 清单或参数非法 ／ 130 中断
 
 ## 7. FEAT-051 批量汇总、对比与检索
 
-> 本节为后续设计素材，用户已确认本轮不实现。051 立项时，索引的上游从下表改为 `batch.json`（字段见附录 A）加各任务的 `l1/statistics/training.json`。
+> 已实现，口径见本节与平台[批量执行设计](../sim-platform/docs/batch-execution-design.md)第 10 章。实现与原设计的差别：索引默认不落盘（`--save` 才写）、检索只做等值过滤、新增"零时延不参与排行"的有效性门槛。
 
 ### 7.1 定位
 
@@ -252,6 +253,7 @@ exit: 0 全 ok ／ 1 存在失败 ／ 2 清单或参数非法 ／ 130 中断
 - **不同 `hardware` 不得混排**：`--group-by hardware` 为默认分组键之一。
 - **不同 `backends` 组合不得混排**（roofline 与 roofline+其他 的耗时不可比）。
 - 失败的候选**不进排行**，但必须出现在失败清单里；"没有结果"不能被当作"结果差"参与比较。
+- **零时延不参与排行**（实现时补充）：预测全 miss 时 `end_to_end_us=0`，若直接排序会把"没算出来"排成第一名，因此这类任务只登记原因、不参与排序。
 - 跨 `schema_version` 的索引不做自动合并。
 
 ### 7.4 命令
@@ -262,6 +264,7 @@ sim-platform batch report <batch_dir> --sort mfu --top 10
 sim-platform batch report <batch_dir> --only failed       # 失败追踪
 sim-platform batch report <batch_dir> --group-by hardware
 sim-platform batch report <batch_dir> --format csv        # 导出
+sim-platform batch report <batch_dir> --save              # 落 batch_index.json + index.csv
 ```
 
 检索首期只支持**固定字段等值过滤**（`--where seq_len=256`），不做表达式引擎或 DSL。理由：一旦开放表达式，语法、类型、错误提示都会变成需要长期维护的公共契约，收益与成本不匹配。
@@ -395,10 +398,10 @@ FEAT-049 范围已由用户确认并按第 6 章实现；下列 11.1、11.4、11
 | 阶段 | 范围 | 状态 |
 | --- | --- | --- |
 | M1 | 清单解析 + 目录契约 + 进程调度 + 状态 + 重试／恢复 | **已完成**。验收：① 多任务 `max_workers` 限制下目录互不覆盖；② 预检失败不派发、其余任务照常；③ 重入同命令只补未成功项；④ 超时任务被 kill 且不影响同批。系统测试 `tests/system/test_batch_capture.py` 用两个真实任务并发验证：约 15 s 内两个任务均 `ok`，各自目录含 `task.log`、`worker.log` 与 `l1/` |
-| M2 | 索引 + 排行 + 失败追踪 + 可比性分组 | 暂缓（FEAT-051） |
-| M3 | 搜索空间解析 + 候选物化 + 接批量 + 目标／约束／预算 | 暂缓（FEAT-050） |
+| M2 | 索引 + 排行 + 失败追踪 + 可比性分组 | **已完成**。验收：① 非 `ok` 与非正时延任务不进排行且给出原因；② synthetic 默认排除；③ `hardware`／`backends` 分组不混排；④ 失败项保留在 `index.csv` 与 `not ranked` 清单；⑤ 索引带 `schema_version`，未知版本拒读。13 个单元用例 + 真实批次验证 |
+| M3 | 搜索空间解析 + 候选物化 + 接批量 + 目标／约束／预算 | 暂缓（FEAT-050，用户确认训练场景不做寻优） |
 
-M2 依赖 M1 产物，M3 依赖 M1 与 M2。M2 的索引器可以先用手写目录夹具做单元测试，不必等 M1 完成。
+M2 依赖 M1 产物，M3 依赖 M1 与 M2。M2 已用手写目录夹具做单元测试，不依赖真实捕获。
 
 ## 13. 测试策略
 
@@ -407,11 +410,12 @@ M2 依赖 M1 产物，M3 依赖 M1 与 M2。M2 的索引器可以先用手写目
 | 层 | 覆盖 | 现状 |
 | --- | --- | --- |
 | 单元 | 清单解析与校验（版本、id 规则、重复、缺失文件、未知键）、CLI 分发与 `--output-dir` 覆盖 | 已实现，`tests/unit/batch/` |
+| 单元 | 索引字段、缺失原因、零时延门槛、synthetic 排除、排序方向、分组、过滤、CSV、`--save`、版本拒读 | 已实现，`tests/unit/batch/test_report.py` |
 | 模块 | 注入假命令验证并发重叠、失败隔离、预检拦截、超时 kill、resume 与 `--force` | 已实现，`tests/integration/test_batch_runner.py` |
 | 系统（opt-in） | 2 个真实任务并发跑通，检查目录隔离、`batch.json`、`training.json` 覆盖字段 | 已实现，`tests/system/test_batch_capture.py`，随 `RUN_TRAINING_SYSTEM=1` 门禁 |
 
 
-不允许用"能跑"代替断言：超时、重试、恢复三条必须有可判定的断言，而不是看日志。
+不允许用"能跑"代替断言：超时、重试、恢复、排行资格四条必须有可判定的断言，而不是看日志。
 
 ## 14. 风险与缓解
 
@@ -464,7 +468,8 @@ M2 依赖 M1 产物，M3 依赖 M1 与 M2。M2 的索引器可以先用手写目
 }
 ```
 
-051 立项时的索引列名草案保留在第 7.2 节，不进本轮产物。
+索引的实际字段与落盘格式以平台[批量执行使用说明](../sim-platform/docs/batch-execution.md)第 4 章为准；
+第 7.2 节保留设计意图（例如 `statistics_duration_us`、`config_fingerprint` 的取舍理由）。
 
 ## 附录 B：与既有文档的关系
 
