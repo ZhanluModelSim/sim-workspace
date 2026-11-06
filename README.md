@@ -6,7 +6,7 @@
 
 | 目录 / 远端 | 责任与文档入口 |
 | --- | --- |
-| [sim-platform](https://github.com/ZhanluModelSim/sim-platform) | 产品集成、公共图、预测编排、DES、指标与输出；[当前架构](sim-platform/docs/architecture.md)、[扩展指南](sim-platform/docs/extending-platform.md)、[开发验证](sim-platform/docs/development-status.md) |
+| [sim-platform](https://github.com/ZhanluModelSim/sim-platform) | 产品集成、公共图、预测编排、DES、指标与输出；[当前架构](sim-platform/docs/architecture.md)、[扩展指南](sim-platform/docs/development/extending-platform.md)、[开发验证](sim-platform/docs/development/development-status.md) |
 | [torchtitan-npu-simulator](https://github.com/ZhanluModelSim/torchtitan-npu-simulator) | 训练负载；[sim 架构](torchtitan-npu-simulator/experiments/simulator/docs/architecture.md)、[模型接入](torchtitan-npu-simulator/experiments/simulator/docs/model-integration.md) |
 | [inference-models-simulator](https://github.com/ZhanluModelSim/inference-models-simulator) | 推理负载；[能力与限制](inference-models-simulator/README.md)、[运行指南](inference-models-simulator/docs/模型仿真运行指南.md) |
 | [operator-performance-models](https://github.com/ZhanluModelSim/operator-performance-models) | 语义解析和算子预测；[入口](operator-performance-models/README.md)、[预测设计](operator-performance-models/docs/roofline-design.md) |

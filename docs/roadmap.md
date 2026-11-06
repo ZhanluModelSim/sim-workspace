@@ -9,7 +9,7 @@
 | 推理平台接入 | 先跑固定配置的一次 prefill 或 decode；核对图/内存/配置交付、query与已有KV长度、单次结果及推理指标。现有训练入口不直接当作通用入口 | 平台 + 推理，算子仓按实际语义需求配合 |
 | topo 与通信建模 | 定义拓扑能力、通信耗时和资源争用各自职责；收敛配置及查询API，不把组名或HBM带宽当网络模型 | 平台 + 算子，负载仓提供通信事实 |
 | 传输配置迁移 | topo 就绪后将 platform.transfers 及旧别名迁到 topo 能力/API，覆盖两种卸载与兼容策略 | 平台，训练核对行为保持 |
-| 批量寻优 | 批量执行（一个文件的参数扫描展开）与结果汇总／排行已实现，见[规模化编排设计](scaled-orchestration-design.md)与平台[批量执行](../sim-platform/docs/batch-execution.md)；用户已确认训练场景不做搜索式寻优，仍待决的是何时重启 FEAT-050 | 平台 |
+| 批量寻优 | 批量执行（一个文件的参数扫描展开）与结果汇总／排行已实现，见[规模化编排设计](../sim-platform/docs/design/scaled-orchestration-design.md)与平台[批量执行](../sim-platform/docs/usage/batch-execution.md)；用户已确认训练场景不做搜索式寻优，仍待决的是何时重启 FEAT-050 | 平台 |
 | 精确组件组合与发布 | 建设平台单向维护的集成清单、普通 wheel 安装及集成CI；记录提交、制品和环境，根仓不重复锁版本 | 各组件独立发布，平台集成 |
 | 性能校准与覆盖验证 | 使用已建模主要算子及代表性真实负载验证，明确缺失覆盖；不追求100%覆盖作为运行门槛，也不固定当前示例端到端时间 | 算子仓 + 平台 + 硬件数据提供方 |
 
@@ -25,9 +25,9 @@
 
 ## 持续验证与维护
 
-- 新模型或同步策略变动后复核[GA 通信模板](../sim-platform/docs/ga-communication-audit.md)；Kimi 策略恢复已修复，不再列为待修。
-- 训练已采用默认结构预热，变更时保护[优化器稳态与状态量](../sim-platform/docs/optimizer-first-use-audit.md)，不能用名称过滤初始化来替代正确捕获。
-- 按[真实链路复核方法](../sim-platform/docs/development-status.md#真实链路复核方法)检查基础及卸载组合、部分预测覆盖、结果结构和指标关系；历史实验通过不等于之后的新组合已验收。
+- 新模型或同步策略变动后复核[GA 通信模板](../sim-platform/docs/development/ga-communication-audit.md)；Kimi 策略恢复已修复，不再列为待修。
+- 训练已采用默认结构预热，变更时保护[优化器稳态与状态量](../sim-platform/docs/development/optimizer-first-use-audit.md)，不能用名称过滤初始化来替代正确捕获。
+- 按[真实链路复核方法](../sim-platform/docs/development/development-status.md#真实链路复核方法)检查基础及卸载组合、部分预测覆盖、结果结构和指标关系；历史实验通过不等于之后的新组合已验收。
 - 源字段扩展由实际 adaptor/model 需求驱动；自定义算子角色/轴语义已有交付链路，不为潜在模型猜测标量、索引或Tensor身份。
 - 组件文档状态随实现维护；核对能力时结合当前 README、AGENTS.md 与源码，不沿用旧状态。
 

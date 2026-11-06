@@ -22,7 +22,7 @@
 
 业务目录由根 `.gitignore` 排除，不使用 submodule/gitlink，不强制纳入管理仓。仓库名使用小写连字符，Python 包使用下划线；SIMPlatform 是产品名称。新仓地址以实际创建的信息为准，不猜测远端。
 
-平台训练单任务已贯通；推理仓已有独立实现，但平台推理接入尚未完成。支持清单和验证范围以 [平台开发说明](sim-platform/docs/development-status.md)、[训练入口](torchtitan-npu-simulator/experiments/simulator/README.md)、[推理入口](inference-models-simulator/README.md)、[算子入口](operator-performance-models/README.md)为准，不在管理仓维护算子/模型计数或测试成绩。
+平台训练单任务已贯通；推理仓已有独立实现，但平台推理接入尚未完成。支持清单和验证范围以 [平台开发说明](sim-platform/docs/development/development-status.md)、[训练入口](torchtitan-npu-simulator/experiments/simulator/README.md)、[推理入口](inference-models-simulator/README.md)、[算子入口](operator-performance-models/README.md)为准，不在管理仓维护算子/模型计数或测试成绩。
 
 ## 必须保持的跨仓边界
 
@@ -32,7 +32,7 @@
 - 算子语义解析与性能模型独立注册；分类和执行资源归平台。缺语义不猜测，原始身份、参数顺序、通信组/有序 ranks、FQN、重算及自定义语义需按契约保留。
 - 激活/优化器卸载的图节点、等待依赖和静态内存由训练仓负责；平台提供传输耗时与 DES，不重复补拖尾或扣显存。两个开关独立，当前传输配置后续迁移 topo，详见[跨仓边界](docs/backend-requirements.md)。
 - L1 处理单图执行，L2 组织图实例与跨阶段依赖。当前串行训练方案不等于 PP 或推理循环已接入；图与内存的统一表达也不等于动态内存回放已实现。
-- vec 与 MoE A2A 均由平台在 DES 前按序修正执行耗时；两者配置均为缩减比例，默认 0、范围 [0,1]，不改模型工作量；MoE 近似替代 MegaMoE，具体识别与证据见[平台修正说明](sim-platform/docs/pre-des-corrections.md)。
+- vec 与 MoE A2A 均由平台在 DES 前按序修正执行耗时；两者配置均为缩减比例，默认 0、范围 [0,1]，不改模型工作量；MoE 近似替代 MegaMoE，具体识别与证据见[平台修正说明](sim-platform/docs/design/pre-des-corrections.md)。
 - 原始事实、预测、执行成本、时间线和汇总修正分别保存。共享配置只管理默认设置，单次任务固定快照；独立组件不反向导入平台配置或内部实现。
 - 预测 miss/fail 必须显式记录，平台以零耗时保留依赖继续；失败不伪装成功、不入缓存。指标按已知工作量正常输出并标记覆盖不完整；配置/图结构等任务错误仍失败。具体容错及分母见平台文档。
 - **算子建模以 DeepSeek-V4 为基线模板（2026-11-03 用户确认）。** 算子清单、adaptor 覆盖、建模优先级和真机对照先以 DeepSeek-V4 实际负载为依据；其他模型的样本单独说明，不混入基线。对照必须保留模型几何、并行、精度、重计算、优化器、rank 和输入 shape/dtype 的来源。用户允许用 example 硬件参数辅助算子级思考，但它不是实际芯片的精度验证。依据实跑 Device Total Duration 确认设备耗时为零的纯元数据／仅分配操作，不单独建 cost model，由平台零成本规则处理并保留依赖、布局和内存事实；不因预测结果为0或成本未知就列入此清单。不将 copy、cast、条件性 reshape 或同步操作按名称永久跳过。
