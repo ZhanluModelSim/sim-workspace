@@ -11,7 +11,7 @@
 | [inference-models-simulator](https://github.com/ZhanluModelSim/inference-models-simulator) | 推理负载；[能力与限制](inference-models-simulator/README.md)、[运行指南](inference-models-simulator/docs/模型仿真运行指南.md) |
 | [operator-performance-models](https://github.com/ZhanluModelSim/operator-performance-models) | 语义解析和算子预测；[入口](operator-performance-models/README.md)、[预测设计](operator-performance-models/docs/roofline-design.md) |
 
-平台已贯通训练单任务；推理仓已有独立负载实现，平台接入仍待完成。组件支持范围与验收以各仓为准，管理仓不维护重复功能清单。仓库名使用小写连字符，Python 导入包使用下划线；SIMPlatform 为平台产品名称。
+平台已贯通训练单任务及推理独立入口，支持逐图评估、统计和批量执行；复杂推理服务调度仍待设计。组件支持范围与验收以各仓为准，管理仓不维护重复功能清单。仓库名使用小写连字符，Python 导入包使用下划线；SIMPlatform 为平台产品名称。
 
 表内相对文档链接用于获取完整工作区后的本地阅读；仅浏览管理仓远端时，通过各业务仓远端入口访问其文档。
 

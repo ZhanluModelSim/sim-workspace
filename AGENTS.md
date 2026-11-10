@@ -22,7 +22,7 @@
 
 业务目录由根 `.gitignore` 排除，不使用 submodule/gitlink，不强制纳入管理仓。仓库名使用小写连字符，Python 包使用下划线；SIMPlatform 是产品名称。新仓地址以实际创建的信息为准，不猜测远端。
 
-平台训练单任务已贯通；推理仓已有独立实现，但平台推理接入尚未完成。支持清单和验证范围以 [平台开发说明](sim-platform/docs/development/development-status.md)、[训练入口](torchtitan-npu-simulator/experiments/simulator/README.md)、[推理入口](inference-models-simulator/README.md)、[算子入口](operator-performance-models/README.md)为准，不在管理仓维护算子/模型计数或测试成绩。
+平台训练单任务及推理独立入口已贯通，已有逐图评估、统计和批量执行；复杂推理服务调度仍待设计。支持清单和验证范围以 [平台开发说明](sim-platform/docs/development/development-status.md)、[训练入口](torchtitan-npu-simulator/experiments/simulator/README.md)、[推理入口](inference-models-simulator/README.md)、[算子入口](operator-performance-models/README.md)为准，不在管理仓维护算子/模型计数或测试成绩。
 
 ## 必须保持的跨仓边界
 
@@ -30,7 +30,7 @@
 - 平台消费训练返回的 FSDP 通信视图，不打开隐藏准备/搬移图。负载仓交付图事实与内存对象，不强制写文件，也不承担成本预测。
 - 算子算法假设、默认参数、标定策略及校验完全归算子仓，平台只提供事实、硬件能力/利用率和通用后端选择、调用与缓存，不建立 roofline 或其他模型专属配置。
 - 算子语义解析与性能模型独立注册；分类和执行资源归平台。缺语义不猜测，原始身份、参数顺序、通信组/有序 ranks、FQN、重算及自定义语义需按契约保留。
-- 激活/优化器卸载的图节点、等待依赖和静态内存由训练仓负责；平台提供传输耗时与 DES，不重复补拖尾或扣显存。两个开关独立，当前传输配置后续迁移 topo，详见[跨仓边界](docs/backend-requirements.md)。
+- 激活/优化器卸载的图节点、等待依赖和静态内存由训练仓负责；平台提供传输耗时与 DES，不重复补拖尾或扣显存。两个开关独立，当前主机传输配置后续迁移统一 topo 传输 API，详见[跨仓边界](docs/backend-requirements.md)。
 - L1 处理单图执行，L2 组织图实例与跨阶段依赖。当前串行训练方案不等于 PP 或推理循环已接入；图与内存的统一表达也不等于动态内存回放已实现。
 - vec 与 MoE A2A 均由平台在 DES 前按序修正执行耗时；两者配置均为缩减比例，默认 0、范围 [0,1]，不改模型工作量；MoE 近似替代 MegaMoE，具体识别与证据见[平台修正说明](sim-platform/docs/design/pre-des-corrections.md)。
 - 原始事实、预测、执行成本、时间线和汇总修正分别保存。共享配置只管理默认设置，单次任务固定快照；独立组件不反向导入平台配置或内部实现。

@@ -7,13 +7,15 @@
 | 环节 | 负责仓库 | 边界与实现入口 |
 | --- | --- | --- |
 | 训练负载 | torchtitan-npu-simulator | 模型、框架适配、预热/捕获、FSDP 通信视图、卸载计划和静态显存；见[训练架构](../torchtitan-npu-simulator/experiments/simulator/docs/architecture.md) |
-| 推理负载 | inference-models-simulator | 模型表达、输入/状态、图调用计划、捕获及内存；已有独立实现，见[运行指南](../inference-models-simulator/docs/模型仿真运行指南.md)；平台接入仍待完成 |
+| 推理负载 | inference-models-simulator | 模型表达、输入/状态、图调用计划、捕获及内存；已接平台独立入口，见[运行指南](../inference-models-simulator/docs/模型仿真运行指南.md)和[平台推理入口](../sim-platform/docs/usage/inference-task-entrypoint.md) |
 | 公共适配 | sim-platform | 归一负载、来源和静态内存，校验依赖及语义，不重新实现模型；见[公共负载结构](../sim-platform/docs/design/training-api-and-l1-schema.md) |
 | 算子预测 | operator-performance-models | 语义解析、模型注册、公式、预测明细与后端协议；见[预测设计](../operator-performance-models/docs/roofline-design.md) |
 | 硬件与执行 | sim-platform | 用户硬件配置、调用/缓存、执行资源、L1、L2、修正和时延汇总；见[平台架构](../sim-platform/docs/architecture.md) |
 | 统计与产品输出 | sim-platform | 配置来源、日志、指标、报告与集成验收；见[训练统计](../sim-platform/docs/design/training-statistics.md)和[开发验证](../sim-platform/docs/development/development-status.md) |
 
 训练与推理的公共性首先是职责和可复用能力，不强制相同参数空间、TaskSpec、provider 父类或捕获实现。推理侧决定执行哪些图、次数、数据/状态绑定和分支；平台决定资源上的时序，不重新推断 draft/verify、KV 更新等模型行为。平台当前训练 Workload/入口不代表推理契约已经冻结。
+
+当前串行分块 prefill 是平台展开请求并推进 KV 起点的已有特例，见[调用计划实现](../sim-platform/docs/design/inference-call-plan.md)。它与上述计划归属仍需收敛，见[待办](roadmap.md)；本次状态校正不迁移实现，也不将该特例推广为其他模型调用计划的职责规则。
 
 ## 负载事实的交付
 
@@ -29,14 +31,14 @@
 
 默认算法假设、内部计算精度、等效操作计数、固定开销及校验归算子仓。平台按名称调用通用后端工厂或注入 Backend，不管理模型专属配置字段；替换为查表等后端不应修改平台任务 schema。有效版本和配置由后端声明，平台只用作缓存身份，不解释算法参数。默认模型假设与设备标定须明确区分。
 
-芯片/拓扑的用户配置归平台，算子仓消费窄能力接口，不读取平台目录、不反向依赖平台。局部硬件预测覆盖不自动表示异构部署调度。当前 chip 已实现，topo 和通信建模仍需收敛，见[硬件入口](../sim-platform/hardware/README.md)。
+芯片/拓扑的用户配置归平台，算子仓消费窄能力接口，不读取平台目录、不反向依赖平台。局部硬件预测覆盖不自动表示异构部署调度。当前已有 chip、topology 加载及通信 V1 单算子接入；跨算子通信争用及设备标定不因此视为完成，见[硬件入口](../sim-platform/hardware/README.md)和[通信接入](../sim-platform/docs/communication-v1-implementation.md)。
 
 平台缓存原始预测，键覆盖语义、硬件、模型版本和有效配置；执行修正不污染缓存。miss/fail 在平台明确记录后以零耗时继续，保留依赖和覆盖状态；配置/路由/图错误仍失败。完整策略和指标覆盖定义见[预测容错](../sim-platform/docs/design/prediction-tolerance.md)，不在管理仓维护异常类或缓存字段清单。
 
 ## 卸载、执行与修正
 
 - 训练仓生成激活/优化器双向传输与等待依赖，修正最终静态内存；平台只计算传输时间、运行 DES 和消费预算。两种卸载独立开关，不将传输时间改写为 AdamW 时间，也不重复补窗口拖尾或扣显存。
-- 平台 `platform.transfers` 为过渡配置；后续 topo 完成时，两种卸载共同切换到 topo 配置及带宽/耗时工具 API。迁移须覆盖配置来源、结果引用和旧配置兼容，不使用 HBM 带宽替代链路带宽。
+- 平台 `platform.transfers` 为过渡配置；后续统一主机传输能力/API 就绪时，两种卸载共同切换到 topo 配置及带宽/耗时工具 API。迁移须覆盖配置来源、结果引用和旧配置兼容，不使用 HBM 带宽替代链路带宽。
 - L1 负责单图，L2 负责阶段实例及跨阶段依赖。当前训练按 GA 串行复用 F/B 后执行一次 O，不据此承诺 PP、跨阶段异步执行或推理循环。
 - vec 修正在 DES 前，保留原始预测和执行成本；DES 后处理保留原时间线与具名变化记录。MoE A2A 修正用于近似替代 MegaMoE，不接入独立 MegaMoE 实现；按最新确认在 DES 之前处理。先按层级 FQN、执行类型及通信依赖提取片段，区分原始前向、重算和梯度反向；两种系数均表示缩减比例、默认 0 且范围 [0,1]；MoE 按该比例对 min(通信串行和, vec 修正后计算串行和) 分摊折减，只改 DES 耗时，不改工作量；见[平台 DES 前修正](../sim-platform/docs/design/pre-des-corrections.md)。
 

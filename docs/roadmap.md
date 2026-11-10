@@ -1,16 +1,18 @@
 # 跨仓待办与未决事项
 
-本页只记录需要跨仓协作或用户决策的未完成工作，不是冻结的排期，也不复制组件内部功能清单。已接入训练单任务、两种卸载、指标/导出、日志、预测容错和 tensor_semantics 的实现见[平台架构](../sim-platform/docs/architecture.md)。推理仓已有独立实现，待办是平台集成，不是从零创建推理仓。
+本页只记录需要跨仓协作或用户决策的未完成工作，不是冻结的排期，也不复制组件内部功能清单。训练单任务、推理独立入口及批量、两种卸载、指标/导出、日志、预测容错和 tensor_semantics 已接入，当前范围见[平台架构](../sim-platform/docs/architecture.md)。
 
 ## 接入与能力补齐
 
 | 事项 | 当前边界 / 需要确认 | 牵头与协作 |
 | --- | --- | --- |
-| 推理平台接入 | 先跑固定配置的一次 prefill 或 decode；核对图/内存/配置交付、query与已有KV长度、单次结果及推理指标。现有训练入口不直接当作通用入口 | 平台 + 推理，算子仓按实际语义需求配合 |
-| topo 与通信建模 | 定义拓扑能力、通信耗时和资源争用各自职责；收敛配置及查询API，不把组名或HBM带宽当网络模型 | 平台 + 算子，负载仓提供通信事实 |
-| 传输配置迁移 | topo 就绪后将 platform.transfers 及旧别名迁到 topo 能力/API，覆盖两种卸载与兼容策略 | 平台，训练核对行为保持 |
+| 推理调用计划归属 | 独立入口、逐图预测/DES、统计及批量已实现；串行分块 prefill 目前由平台展开请求，与模型计划归负载仓的边界需要收敛，复杂计划另行设计，本轮不迁移 | 平台 + 推理 |
+| 通信争用与校准 | topology 加载和通信 V1 单算子接入已实现；后续收敛跨算子资源争用及真机校准，不把单算子模型视为多rank联合调度 | 平台 + 算子，负载仓提供通信事实 |
+| 推理通信事实对齐 | 当前推理生产者未交付通信 V1 所需的完整 collective facts，已有基线组合通信系统测试失败；需按实际 SUM/缩放及全组 A2A 计划补交付，不由平台猜测或放宽算子校验。组合证据见[兼容验证](../sim-platform/docs/development/component-compatibility.md) | 推理牵头，平台 + 算子验证 |
+| 训练 PREMUL_SUM 事实对齐 | 当前训练仍交付 v1 占位缩放事实，算子与平台已要求 v2 原生因子证据；已有基线组合出现预测 miss。需在原生调用处提取并验证因子，不能把占位 1.0 升格为 v2，见同一[兼容验证](../sim-platform/docs/development/component-compatibility.md) | 训练牵头，平台 + 算子验证 |
+| 传输配置迁移 | 通信 V1 的 topology 已有实现；统一主机传输能力/API 就绪后，将 platform.transfers 及旧别名迁到 topo 能力/API，覆盖两种卸载与兼容策略 | 平台，训练核对行为保持 |
 | 批量寻优 | 批量执行（一个文件的参数扫描展开）与结果汇总／排行已实现，见[规模化编排设计](../sim-platform/docs/design/scaled-orchestration-design.md)与平台[批量执行](../sim-platform/docs/usage/batch-execution.md)；用户已确认训练场景不做搜索式寻优，仍待决的是何时重启 FEAT-050 | 平台 |
-| 精确组件组合与发布 | 建设平台单向维护的集成清单、普通 wheel 安装及集成CI；记录提交、制品和环境，根仓不重复锁版本 | 各组件独立发布，平台集成 |
+| 精确组件组合与发布 | 已有[有限范围组合验证](../sim-platform/docs/development/component-compatibility.md)；继续补齐完整通过的发布组合及集成 CI，记录提交、制品和环境，根仓不重复锁版本 | 各组件独立发布，平台集成 |
 | 性能校准与覆盖验证 | 使用已建模主要算子及代表性真实负载验证，明确缺失覆盖；不追求100%覆盖作为运行门槛，也不固定当前示例端到端时间 | 算子仓 + 平台 + 硬件数据提供方 |
 
 推理现状和限制见[推理 README](../inference-models-simulator/README.md)、[运行指南](../inference-models-simulator/docs/模型仿真运行指南.md)；预测范围见[算子 README](../operator-performance-models/README.md)。这里不维护逐模型或逐算子完成度。
