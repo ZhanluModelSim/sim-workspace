@@ -6,6 +6,7 @@
 
 | 环节 | 负责仓库 | 边界与实现入口 |
 | --- | --- | --- |
+| 用户入口与任务服务 | sim-portal | 账号、草稿、排队、整任务分发、Worker 生命周期与产物展示；不参与仿真计算，见[Portal 架构](../sim-portal/docs/architecture.md) |
 | 训练负载 | torchtitan-npu-simulator | 模型、框架适配、预热/捕获、FSDP 通信视图、卸载计划和静态显存；见[训练架构](../torchtitan-npu-simulator/experiments/simulator/docs/architecture.md) |
 | 推理负载 | inference-models-simulator | 模型表达、输入/状态、图调用计划、捕获及内存；已接平台独立入口，见[运行指南](../inference-models-simulator/docs/模型仿真运行指南.md)和[平台推理入口](../sim-platform/docs/usage/inference-task-entrypoint.md) |
 | 公共适配 | sim-platform | 归一负载、来源和静态内存，校验依赖及语义，不重新实现模型；见[公共负载结构](../sim-platform/docs/design/training-api-and-l1-schema.md) |
@@ -14,6 +15,8 @@
 | 统计与产品输出 | sim-platform | 配置来源、日志、指标、报告与集成验收；见[训练统计](../sim-platform/docs/design/training-statistics.md)和[开发验证](../sim-platform/docs/development/development-status.md) |
 
 训练与推理的公共性首先是职责和可复用能力，不强制相同参数空间、TaskSpec、provider 父类或捕获实现。推理侧决定执行哪些图、次数、数据/状态绑定和分支；平台决定资源上的时序，不重新推断 draft/verify、KV 更新等模型行为。平台当前训练 Workload/入口不代表推理契约已经冻结。
+
+SIMPortal 位于仿真链路外侧，不参与计算：它管身份、草稿、排队、整任务分发、Worker 生命周期与产物展示，仿真一律经平台公共入口执行。依赖方向为 portal → 平台 → 组件，平台不反向导入 portal；门户不复制模型注册表、不拆候选跨机器、不重算时延/显存/寻优判定，slot 也不等于模拟设备数，Meta/synthetic 或部分预测不能当作可行性或精度证明。当前已完成范围与最小交付边界见[Portal 实施计划](../sim-portal/docs/implementation-plan.md)。
 
 当前串行分块 prefill 是平台展开请求并推进 KV 起点的已有特例，见[调用计划实现](../sim-platform/docs/design/inference-call-plan.md)。它与上述计划归属仍需收敛，见[待办](roadmap.md)；本次状态校正不迁移实现，也不将该特例推广为其他模型调用计划的职责规则。
 
