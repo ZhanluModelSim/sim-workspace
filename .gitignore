@@ -3,6 +3,7 @@
 /torchtitan-npu-simulator/
 /inference-models-simulator/
 /operator-performance-models/
+/sim-portal/
 
 # Previous checkout names, in case an older workspace is restored.
 /SIMPlatform/

@@ -1,6 +1,6 @@
 # SimWorkspace 工作区协作约定
 
-本仓是轻量工作区管理仓，负责跨仓职责、协作规则、文档导航和待办。业务代码由四个独立仓库维护，SIMPlatform 负责集成；根仓不承载业务包、第二套运行器或正式组件锁定清单。
+本仓是轻量工作区管理仓，负责跨仓职责、协作规则、文档导航和待办。业务代码由五个独立仓库维护，SIMPlatform 负责仿真集成、SIMPortal 负责用户入口；根仓不承载业务包、第二套运行器或正式组件锁定清单。
 
 ## 阅读与决策依据
 
@@ -19,13 +19,15 @@
 | `torchtitan-npu-simulator/` | 训练模型与框架适配、捕获/预热、训练专属图处理、卸载依赖和静态内存 |
 | `inference-models-simulator/` | 推理模型与框架适配、捕获、调用计划及状态语义、内存交付 |
 | `operator-performance-models/` | 特征语义 adaptor、独立模型注册、性能公式、后端协议及预测明细 |
+| `sim-portal/` | 用户入口与远程任务服务：账号、草稿、排队、整任务分发、Worker 生命周期、产物与展示 |
 
-业务目录由根 `.gitignore` 排除，不使用 submodule/gitlink，不强制纳入管理仓。仓库名使用小写连字符，Python 包使用下划线；SIMPlatform 是产品名称。新仓地址以实际创建的信息为准，不猜测远端。
+业务目录由根 `.gitignore` 排除，不使用 submodule/gitlink，不强制纳入管理仓。仓库名使用小写连字符，Python 包使用下划线；SIMPlatform 是平台产品名称，SIMPortal 是入口产品名称。新仓地址以实际创建的信息为准，不猜测远端。
 
-平台训练单任务及推理独立入口已贯通，已有逐图评估、统计和批量执行；复杂推理服务调度仍待设计。支持清单和验证范围以 [平台开发说明](sim-platform/docs/development/development-status.md)、[训练入口](torchtitan-npu-simulator/experiments/simulator/README.md)、[推理入口](inference-models-simulator/README.md)、[算子入口](operator-performance-models/README.md)为准，不在管理仓维护算子/模型计数或测试成绩。
+平台训练单任务及推理独立入口已贯通，已有逐图评估、统计和批量执行；复杂推理服务调度仍待设计。SIMPortal 已接入配置、预检、整任务执行与结果工作台，交付边界以其实施计划为准。支持清单和验证范围以 [平台开发说明](sim-platform/docs/development/development-status.md)、[训练入口](torchtitan-npu-simulator/experiments/simulator/README.md)、[推理入口](inference-models-simulator/README.md)、[算子入口](operator-performance-models/README.md)、[Portal 实施计划](sim-portal/docs/implementation-plan.md)为准，不在管理仓维护算子/模型计数或测试成绩。
 
 ## 必须保持的跨仓边界
 
+- SIMPortal 只负责身份、草稿、排队、整任务分发、Worker 生命周期与产物展示，仿真一律经平台公共入口执行；不拆候选、不重算时延/显存/寻优判定，不复制模型注册表。依赖方向为 portal → 平台 → 组件，平台不反向导入 portal。
 - 训练与推理保留独立配置、入口及捕获机制；复用公共能力，不强制统一 TaskSpec、父类或训练 GA。推理模型调用计划归负载仓，资源执行时序归平台。
 - 平台消费训练返回的 FSDP 通信视图，不打开隐藏准备/搬移图。负载仓交付图事实与内存对象，不强制写文件，也不承担成本预测。
 - 算子算法假设、默认参数、标定策略及校验完全归算子仓，平台只提供事实、硬件能力/利用率和通用后端选择、调用与缓存，不建立 roofline 或其他模型专属配置。
@@ -49,7 +51,7 @@ Python 开发遵循[公共规范](.agents/standards/python-development.md)，已
 ## 版本与验证
 
 - 每仓独立 Git、依赖、测试和发布。开始前检查已有改动，不覆盖用户工作；跨仓变更说明生产者、消费者及迁移方式。
-- 平台单向选择并验证组件组合；正式集成清单归平台，记录精确 commit、制品和环境，组件不反向锁定平台。分支名不代替可复现版本。
+- 平台单向选择并验证组件组合；正式集成清单归平台，记录精确 commit、制品和环境，组件不反向锁定平台。分支名不代替可复现版本。SIMPortal 消费平台公共入口，只引用平台记录的发布组合与标识，不维护第二份组合清单。
 - 本地开发组合记录路径、实际 SHA、dirty 状态和导入位置；容器映射或 editable 安装不能靠历史路径猜测。负载仓允许不同运行环境，不强制训练与推理共用一个环境。
 - 跨仓变更尽量保持兼容，先验证候选精确组合，再按组件到平台顺序交付；最终提交组合仍需相应验证。wheel 在源码外普通安装检查，不把本机 editable 成功视为发布验收。
 - 按变更风险执行单元、模块及必要系统验证，重要实现做独立 review。纯文档修改检查事实、链接、路径和范围，无需重跑昂贵训练。

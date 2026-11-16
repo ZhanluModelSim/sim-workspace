@@ -10,8 +10,9 @@
 | [torchtitan-npu-simulator](https://github.com/ZhanluModelSim/torchtitan-npu-simulator) | 训练负载；[sim 架构](torchtitan-npu-simulator/experiments/simulator/docs/architecture.md)、[模型接入](torchtitan-npu-simulator/experiments/simulator/docs/model-integration.md) |
 | [inference-models-simulator](https://github.com/ZhanluModelSim/inference-models-simulator) | 推理负载；[能力与限制](inference-models-simulator/README.md)、[运行指南](inference-models-simulator/docs/模型仿真运行指南.md) |
 | [operator-performance-models](https://github.com/ZhanluModelSim/operator-performance-models) | 语义解析和算子预测；[入口](operator-performance-models/README.md)、[预测设计](operator-performance-models/docs/roofline-design.md) |
+| [sim-portal](https://github.com/ZhanluModelSim/sim-portal) | 用户入口与远程任务服务（Web/MCP、账号、草稿、排队、整任务分发、Worker 与产物展示）；[架构与部署](sim-portal/docs/architecture.md)、[实施计划](sim-portal/docs/implementation-plan.md) |
 
-平台已贯通训练单任务及推理独立入口，支持逐图评估、统计和批量执行；复杂推理服务调度仍待设计。组件支持范围与验收以各仓为准，管理仓不维护重复功能清单。仓库名使用小写连字符，Python 导入包使用下划线；SIMPlatform 为平台产品名称。
+平台已贯通训练单任务及推理独立入口，支持逐图评估、统计和批量执行；复杂推理服务调度仍待设计。SIMPortal 复用平台公共入口提供配置、预检与整任务执行，不重算仿真结果。组件支持范围与验收以各仓为准，管理仓不维护重复功能清单。仓库名使用小写连字符，Python 导入包使用下划线；SIMPlatform 为平台产品名称。
 
 表内相对文档链接用于获取完整工作区后的本地阅读；仅浏览管理仓远端时，通过各业务仓远端入口访问其文档。
 
@@ -25,6 +26,7 @@ cd SimWorkspace
 git clone git@github.com:ZhanluModelSim/sim-platform.git sim-platform
 git clone git@github.com:ZhanluModelSim/inference-models-simulator.git inference-models-simulator
 git clone git@github.com:ZhanluModelSim/operator-performance-models.git operator-performance-models
+git clone git@github.com:ZhanluModelSim/sim-portal.git sim-portal
 git clone --branch codex/simulator-titan030 \
   git@github.com:ZhanluModelSim/torchtitan-npu-simulator.git \
   torchtitan-npu-simulator

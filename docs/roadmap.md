@@ -10,7 +10,8 @@
 | 通信争用与校准 | topology 加载和通信 V1 单算子接入已实现；后续收敛跨算子资源争用及真机校准，不把单算子模型视为多rank联合调度 | 平台 + 算子，负载仓提供通信事实 |
 | 传输配置迁移 | 通信 V1 的 topology 已有实现；统一主机传输能力/API 就绪后，将 platform.transfers 及旧别名迁到 topo 能力/API，覆盖两种卸载与兼容策略 | 平台，训练核对行为保持 |
 | 批量寻优 | 批量执行（一个文件的参数扫描展开）与结果汇总／排行已实现，见[规模化编排设计](../sim-platform/docs/design/scaled-orchestration-design.md)与平台[批量执行](../sim-platform/docs/usage/batch-execution.md)；用户已确认训练场景不做搜索式寻优，仍待决的是何时重启 FEAT-050 | 平台 |
-| 精确组件组合与发布 | 已有[有限范围组合验证](../sim-platform/docs/development/component-compatibility.md)；继续补齐完整通过的发布组合及集成 CI，记录提交、制品和环境，根仓不重复锁版本 | 各组件独立发布，平台集成 |
+| 精确组件组合与发布 | 已有[有限范围组合验证](../sim-platform/docs/development/component-compatibility.md)；继续补齐完整通过的发布组合及集成 CI，记录提交、制品和环境，根仓不重复锁版本。Portal 候选组合见平台 `integration/portal-compatibility.json`，仍为未发布状态 | 各组件独立发布，平台集成 |
+| Portal 交付边界 | 单任务、硬件变体、批量、寻优、共享池与机器 HTTPS 已在本机容器验证；真实两机、SSO 与用户侧 HTTPS 部署属门户自身交付边界，见[实施计划](../sim-portal/docs/implementation-plan.md) | sim-portal，平台记录组合 |
 | 性能校准与覆盖验证 | 使用已建模主要算子及代表性真实负载验证，明确缺失覆盖；不追求100%覆盖作为运行门槛，也不固定当前示例端到端时间 | 算子仓 + 平台 + 硬件数据提供方 |
 
 推理现状和限制见[推理 README](../inference-models-simulator/README.md)、[运行指南](../inference-models-simulator/docs/模型仿真运行指南.md)；预测范围见[算子 README](../operator-performance-models/README.md)。这里不维护逐模型或逐算子完成度。
