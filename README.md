@@ -10,14 +10,14 @@ SIMPlatform 将训练／推理负载捕获、算子性能预测与仿真串起�
 
 准备可运行 Linux 容器的 Docker；当前镜像面向 **Linux x86_64（linux/amd64）**。拉取需要网络，运行可断网。
 
-镜像发布在 GitHub Container Registry（GHCR），当前示例使用公开版本 `0.1.0-preview.1`，无需登录。固定 digest、发布记录和验收范围见[平台镜像指南](https://github.com/ZhanluModelSim/sim-platform/blob/main/docs/usage/offline-cli-quickstart.md)。镜像内源码固定，主线更新不会自动进入此版本。
+镜像发布在 GitHub Container Registry（GHCR），当前示例使用公开版本 `0.1.0-preview.2`，无需登录。固定 digest、发布记录和验收范围见[平台镜像指南](https://github.com/ZhanluModelSim/sim-platform/blob/main/docs/usage/offline-cli-quickstart.md)。镜像内源码固定，主线更新不会自动进入此版本。
 
 在宿主机终端执行：
 
 ```bash
-docker pull ghcr.io/zhanlumodelsim/simplatform:0.1.0-preview.1
+docker pull ghcr.io/zhanlumodelsim/simplatform:0.1.0-preview.2
 docker run -it --name sim-demo --pull never --network none \
-  ghcr.io/zhanlumodelsim/simplatform:0.1.0-preview.1 bash
+  ghcr.io/zhanlumodelsim/simplatform:0.1.0-preview.2 bash
 ```
 
 ### 2. 运行训练 demo
