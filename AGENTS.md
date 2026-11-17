@@ -59,7 +59,7 @@ Python 开发遵循[公共规范](.agents/standards/python-development.md)，已
 - 本地开发组合记录路径、实际 SHA、dirty 状态和导入位置；容器映射或 editable 安装不能靠历史路径猜测。负载仓允许不同运行环境，不强制训练与推理共用一个环境。
 - 跨仓变更尽量保持兼容，先验证候选精确组合，再按组件到平台顺序交付；最终提交组合仍需相应验证。wheel 在源码外普通安装检查，不把本机 editable 成功视为发布验收。
 - 按变更风险执行单元、模块及必要系统验证，重要实现做独立 review。纯文档修改检查事实、链接、路径和范围，无需重跑昂贵训练。
-- 所有修改必须在独立任务分支开发，经 PR 合入；禁止直接推送各仓 main/master、远端默认分支和约定集成分支（训练为 codex/simulator-titan030）。禁止本地合并后推送主线或以 API／管理员绕过代替 PR。具体清单和流程见[独立分支与 PR 规则](.agents/workflows/pr-only-development.md)。各仓分别交付，管理仓提交不携带业务仓改动。
+- 所有修改必须在独立任务分支开发，经 PR 合入；禁止直接推送各仓 main/master、远端默认分支和约定集成分支（训练为 feat/npu-simulator）。禁止本地合并后推送主线或以 API／管理员绕过代替 PR。具体清单和流程见[独立分支与 PR 规则](.agents/workflows/pr-only-development.md)。各仓分别交付，管理仓提交不携带业务仓改动。
 
 ## 文档维护边界
 

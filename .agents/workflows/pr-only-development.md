@@ -10,10 +10,10 @@
 | sim-platform | `main` |
 | inference-models-simulator | `main` |
 | operator-performance-models | `main` |
-| torchtitan-npu-simulator | `codex/simulator-titan030` |
+| torchtitan-npu-simulator | `feat/npu-simulator` |
 
 所有仓库的 `main`、`master`、远端默认分支和表中约定集成分支均禁止直接推送。
-训练仓远端默认分支目前为 `feat/npu-simulator`，不与工作区集成分支混同；本规则不更改默认分支。
+训练仓工作区集成分支与远端默认分支统一为 `feat/npu-simulator`；后续任务从此分支建立独立任务分支，PR 以此为目标。旧 `codex/simulator-titan030` 不再作为开发获取或集成入口。迁移见[训练仓 PR #21](https://github.com/ZhanluModelSim/torchtitan-npu-simulator/pull/21)，原目标内容保留在远端备份分支 `backup/feat-npu-simulator-20261117-2e988ab4`。
 训练仓暂不配置服务端保护，但同样遵守此协作约束。新增或迁移集成分支须经用户明确确认并更新本表，不能依据当前 checkout 或过期的 origin/HEAD 推断。
 
 ## 开发与交付

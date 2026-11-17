@@ -11,7 +11,7 @@ git clone git@github.com:ZhanluModelSim/sim-workspace.git SimWorkspace
 cd SimWorkspace
 git clone git@github.com:ZhanluModelSim/sim-platform.git sim-platform
 git clone git@github.com:ZhanluModelSim/operator-performance-models.git operator-performance-models
-git clone --branch codex/simulator-titan030 \
+git clone --branch feat/npu-simulator \
   git@github.com:ZhanluModelSim/torchtitan-npu-simulator.git torchtitan-npu-simulator
 git clone git@github.com:ZhanluModelSim/inference-models-simulator.git inference-models-simulator
 git clone git@github.com:ZhanluModelSim/sim-portal.git sim-portal
