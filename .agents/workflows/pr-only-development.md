@@ -13,14 +13,13 @@
 | torchtitan-npu-simulator | `feat/npu-simulator` |
 
 所有仓库的 `main`、`master`、远端默认分支和表中约定集成分支均禁止直接推送。
-训练仓工作区集成分支与远端默认分支统一为 `feat/npu-simulator`；后续任务从此分支建立独立任务分支，PR 以此为目标。旧 `codex/simulator-titan030` 不再作为开发获取或集成入口。迁移见[训练仓 PR #21](https://github.com/ZhanluModelSim/torchtitan-npu-simulator/pull/21)，原目标内容保留在远端备份分支 `backup/feat-npu-simulator-20261117-2e988ab4`。
 训练仓暂不配置服务端保护，但同样遵守此协作约束。新增或迁移集成分支须经用户明确确认并更新本表，不能依据当前 checkout 或过期的 origin/HEAD 推断。
 
 ## 开发与交付
 
 1. 开始前检查规则、分支、HEAD、工作树及远端，保留用户改动；同步远端引用并确认集成基线。
 2. 从基线创建独立任务分支，例如 `feat/...`、`fix/...`、`docs/...`；不便切换共享目录时使用 worktree。
-   即使集成分支名称含 codex/，也不能直接在其上开发。所有修改与提交均在任务分支完成。
+   所有修改与提交均在任务分支完成，不在集成分支直接开发。
 3. 验证并 review 后，只推送任务分支，显式指定远端及分支 refspec，推送前再次核对禁推清单。
    禁止无目标 git push、--all、--mirror，不强推覆盖协作者；不得以 API 更新 ref、网页直接提交或管理员绕过代替 PR。
 4. 获得远端交付授权后创建 PR，明确仓库、base、head、最终行为、验证及限制。
