@@ -1,53 +1,91 @@
 # 大模型负载仿真工作区
 
-本仓管理跨仓协作规则、职责边界、文档导航与待办。业务代码位于独立仓库，不纳入本仓，也不使用 Git submodule。
+SIMPlatform 将训练／推理负载捕获、算子性能预测与仿真串起来，输出时延、吞吐、静态显存预算、算子统计和时间线。支持单任务和参数扫描批量执行。
 
-## 仓库与阅读入口
+**首次使用推荐发布镜像：无需克隆源码、安装 Python 依赖、下载模型权重或准备 NPU。** 本页带你完成一次训练 demo；详细配置与用例由平台仓维护。
 
-| 目录 / 远端 | 责任与文档入口 |
-| --- | --- |
-| [sim-platform](https://github.com/ZhanluModelSim/sim-platform) | 产品集成、公共图、预测编排、DES、指标与输出；[当前架构](sim-platform/docs/architecture.md)、[扩展指南](sim-platform/docs/development/extending-platform.md)、[开发验证](sim-platform/docs/development/development-status.md) |
-| [torchtitan-npu-simulator](https://github.com/ZhanluModelSim/torchtitan-npu-simulator) | 训练负载；[sim 架构](torchtitan-npu-simulator/experiments/simulator/docs/architecture.md)、[模型接入](torchtitan-npu-simulator/experiments/simulator/docs/model-integration.md) |
-| [inference-models-simulator](https://github.com/ZhanluModelSim/inference-models-simulator) | 推理负载；[能力与限制](inference-models-simulator/README.md)、[运行指南](inference-models-simulator/docs/模型仿真运行指南.md) |
-| [operator-performance-models](https://github.com/ZhanluModelSim/operator-performance-models) | 语义解析和算子预测；[入口](operator-performance-models/README.md)、[预测设计](operator-performance-models/docs/roofline-design.md) |
-| [sim-portal](https://github.com/ZhanluModelSim/sim-portal) | 用户入口与远程任务服务（Web/MCP、账号、草稿、排队、整任务分发、Worker 与产物展示）；[架构与部署](sim-portal/docs/architecture.md)、[实施计划](sim-portal/docs/implementation-plan.md) |
+## 首次运行
 
-平台已贯通训练单任务及推理独立入口，支持逐图评估、统计和批量执行；复杂推理服务调度仍待设计。SIMPortal 复用平台公共入口提供配置、预检与整任务执行，不重算仿真结果。组件支持范围与验收以各仓为准，管理仓不维护重复功能清单。仓库名使用小写连字符，Python 导入包使用下划线；SIMPlatform 为平台产品名称。
+### 1. 获取镜像并进入容器
 
-表内相对文档链接用于获取完整工作区后的本地阅读；仅浏览管理仓远端时，通过各业务仓远端入口访问其文档。
+准备可运行 Linux 容器的 Docker；当前镜像面向 **Linux x86_64（linux/amd64）**。拉取需要网络，运行可断网。
 
-## 获取工作区
+镜像发布在 GitHub Container Registry（GHCR），当前示例使用公开版本 `0.1.0-preview.1`，无需登录。固定 digest、发布记录和验收范围见[平台镜像指南](https://github.com/ZhanluModelSim/sim-platform/blob/main/docs/usage/offline-cli-quickstart.md)。镜像内源码固定，主线更新不会自动进入此版本。
 
-使用具备组织仓库权限的 GitHub SSH 身份：
+在宿主机终端执行：
 
 ```bash
-git clone git@github.com:ZhanluModelSim/sim-workspace.git SimWorkspace
-cd SimWorkspace
-git clone git@github.com:ZhanluModelSim/sim-platform.git sim-platform
-git clone git@github.com:ZhanluModelSim/inference-models-simulator.git inference-models-simulator
-git clone git@github.com:ZhanluModelSim/operator-performance-models.git operator-performance-models
-git clone git@github.com:ZhanluModelSim/sim-portal.git sim-portal
-git clone --branch codex/simulator-titan030 \
-  git@github.com:ZhanluModelSim/torchtitan-npu-simulator.git \
-  torchtitan-npu-simulator
+docker pull ghcr.io/zhanlumodelsim/simplatform:0.1.0-preview.1
+docker run -it --name sim-demo --pull never --network none \
+  ghcr.io/zhanlumodelsim/simplatform:0.1.0-preview.1 bash
 ```
 
-已存在的目录先检查状态，不重复 clone 或覆盖。以上分支是开发获取入口，不是可复现版本锁定；运行前确认实际提交及 dirty 状态。源码就位不等于环境就绪，安装遵循各仓说明，并核对容器映射及 editable 安装的真实导入位置。
+### 2. 运行训练 demo
 
-根 `.gitignore` 排除业务仓、环境、临时日志和运行产物。需要离线交付管理资料时，可执行 `git bundle create ../sim-workspace.bundle --all`，接收者用 `git clone sim-workspace.bundle SimWorkspace` 恢复；业务仓需分别交付，bundle 不包含未提交改动。
+以下命令在容器中执行，环境已经安装，无需额外激活：
 
-## 管理资料
+```bash
+cd /sim-workspace/sim-platform
+sim-platform train examples/training/single.toml --validate
+sim-platform train examples/training/single.toml
+```
 
-1. [AGENTS.md](AGENTS.md)：跨仓开发规则与阅读顺序。
-2. [职责与协作边界](docs/backend-requirements.md)：当前责任交接及组件实现链接。
-3. [跨仓待办](docs/roadmap.md)：未完成能力、待确认设计及协作归属。
-4. [文档与协作规范](docs/workspace-conventions.md)：唯一维护位置、版本和交付。
-5. [公共 agent 资料](.agents/README.md)：推荐工作流与 Python 规范。
+第一条只预检配置，第二条才捕获并仿真。首次训练可能编译镜像内的扩展，无需联网下载。demo 使用 DeepSeek-V4 smoketest 小配置和 `example` 示例硬件。
 
-[启动评审资料](docs/bootstrap/simplatform-architecture-review/README.md)只作历史参考，不是当前开发必读或实现依据；早期临时调查和已替代的决策可从 Git 历史追溯。
+### 3. 查看并取出结果
 
-## 版本管理
+在容器中查看：
 
-根仓只管理上述资料；业务仓独立管理源码、依赖、测试和发布。操作业务代码时进入对应仓库或使用 `git -C`，不要强制添加被忽略目录或转换成 gitlink。
+```bash
+cat runs/training/l1/default/statistics/training.json
+ls runs/training/l1/default/
+```
 
-平台单向选择并验证精确组件组合，正式集成清单归 `sim-platform`；根仓不维护第二份锁定清单。组件不反向锁定平台，包版本或分支名不能代替提交、制品及环境验证。具体流程见[公共规范](docs/workspace-conventions.md)。
+`runs/training/task.log` 是任务日志；`l1/default/` 包含阶段 CSV、Chrome Trace 和统计目录。`training.json` 包含时延、吞吐、利用率、预测覆盖和静态显存。检查结果及预测覆盖，不仅看命令是否成功退出：缺失／失败预测会被记录，任务仍可能完成。
+
+执行 `exit` 退出容器后，在宿主机取出结果：
+
+```bash
+docker cp sim-demo:/sim-workspace/sim-platform/runs/training ./training-results
+```
+
+具名容器保留结果和修改；下次用 `docker start -ai sim-demo` 重新进入。同名容器已存在时使用此命令，或为新容器换名。不要在取出结果前删除容器。
+
+这是 Meta 仿真流程演示：示例硬件不代表已标定设备精度，静态显存预算不等于设备运行时动态峰值。
+
+## 接下来做什么
+
+按当前目标选择一项即可，无需依次读完所有文档。镜像内的 `/sim-workspace/sim-platform/docs/` 和 `examples/` 与镜像版本对应；下列网页链接跟随平台主线。
+
+| 目标 | 平台文档 |
+| --- | --- |
+| 修改模型、并行、batch、精度或硬件配置 | [训练任务与配置](https://github.com/ZhanluModelSim/sim-platform/blob/main/docs/usage/training-task-entrypoint.md) |
+| 批量扫描参数并导出汇总 CSV | [批量执行](https://github.com/ZhanluModelSim/sim-platform/blob/main/docs/usage/batch-execution.md) |
+| 运行推理仿真 | [推理快速开始](https://github.com/ZhanluModelSim/sim-platform/blob/main/docs/usage/inference-quickstart.md) |
+| 阅读 CSV、Trace 和统计产物 | [结果导出](https://github.com/ZhanluModelSim/sim-platform/blob/main/docs/usage/l1-exports.md) |
+| 寻找更多可运行配置 | [示例索引](https://github.com/ZhanluModelSim/sim-platform/blob/main/examples/README.md) |
+| 更新镜像内源码、核对版本 | [镜像指南](https://github.com/ZhanluModelSim/sim-platform/blob/main/docs/usage/offline-cli-quickstart.md) |
+
+批量体验可在同一容器的 `/sim-workspace/sim-platform` 下继续执行：
+
+```bash
+sim-platform batch run examples/training/batch.toml --dry-run
+sim-platform batch run examples/training/batch.toml
+sim-platform batch export runs/batch-demo --top 10
+```
+
+示例展开 8 个任务，状态记录在 `runs/batch-demo/batch.json`，汇总表为 `runs/batch-demo/batch-summary.csv`。退出后可用 `docker cp sim-demo:/sim-workspace/sim-platform/runs/batch-demo ./batch-results` 取出整批产物。重复运行和失败处理见批量文档。
+
+## 参与开发
+
+需要克隆源码、配置开发环境或修改实现时，阅读[开发指南](docs/development.md)。AI 执行任务遵守 [AGENTS.md](AGENTS.md)，按任务进入对应仓库，不默认遍历所有设计文档。
+
+| 仓库 | 职责 |
+| --- | --- |
+| [sim-platform](https://github.com/ZhanluModelSim/sim-platform) | 仿真集成、配置、预测编排、调度与结果 |
+| [torchtitan-npu-simulator](https://github.com/ZhanluModelSim/torchtitan-npu-simulator) | 训练模型、图捕获与静态内存 |
+| [inference-models-simulator](https://github.com/ZhanluModelSim/inference-models-simulator) | 推理模型、调用计划与内存交付 |
+| [operator-performance-models](https://github.com/ZhanluModelSim/operator-performance-models) | 算子语义与性能模型 |
+| [sim-portal](https://github.com/ZhanluModelSim/sim-portal) | Web/MCP 用户入口、任务分发与结果展示 |
+
+本管理仓只维护首次体验导航、跨仓规则与待办；业务仓独立管理，不使用 submodule。管理资料按需查阅[文档索引](docs/README.md)。
