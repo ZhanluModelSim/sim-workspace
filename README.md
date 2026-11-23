@@ -4,6 +4,16 @@ SIMPlatform 将训练／推理负载捕获、算子性能预测与仿真串起�
 
 **首次使用推荐发布镜像：无需克隆源码、安装 Python 依赖、下载模型权重或准备 NPU。** 本页带你完成一次训练 demo；详细配置与用例由平台仓维护。
 
+## 给 AI 安装 SIMPlatform 技能
+
+训练仿真、芯片建模和网络拓扑共用一个 `sim-platform` 技能。有平台源码时，将平台仓的 `.agents/skills/sim-platform/` 整个目录复制到当前 AI 客户端支持的技能目录，再按客户端方式重新加载。仓库位于本工作区的 `sim-platform/`。获取源码、选择安装位置和核对安装结果见[平台技能安装指南](https://github.com/ZhanluModelSim/sim-platform/blob/main/docs/usage/agent-skills.md)。
+
+也可以把这句话交给 AI：
+
+> 请从 ZhanluModelSim/sim-platform 仓库取得与运行环境配套的 sim-platform 技能，按当前客户端的方式安装或加载，并确认能找到 train、chip、topo 三个流程。
+
+安装后可以直接说“用 sim-platform 对比两种训练策略”或“用 sim-platform 核对这份拓扑的端口和带宽”。运行仿真仍使用下文的容器或已准备好的平台环境。
+
 ## 首次运行
 
 ### 1. 获取镜像并进入容器
