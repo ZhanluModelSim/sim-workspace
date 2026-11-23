@@ -2,7 +2,7 @@
 
 本目录由工作区管理仓维护，供跨仓协作复用。规则入口是根 [AGENTS.md](../AGENTS.md)，文档与协作规范见 [workspace-conventions.md](../docs/workspace-conventions.md)。
 
-本页是按需索引，不要求读取全部内容：修改文件前查分支与 PR 规则；需要拆分跨仓任务时查推荐工作流；Python 实现查 Python 规范；需要改进流程或记录跨仓变更时再查 RSI 和 ChangeSet 模板。普通仿真使用直接从[工作区首页](../README.md)进入平台指南。
+本页是按需索引，不要求读取全部内容：修改文件前查分支与 PR 规则；需要拆分跨仓任务时查推荐工作流；Python 实现查 Python 规范；需要改进流程或记录跨仓变更时再查 RSI 和 ChangeSet 模板。普通用户及其 AI 从[用户 Wiki](https://github.com/ZhanluModelSim/sim-workspace/wiki/Home)进入。
 
 ## 放置范围
 

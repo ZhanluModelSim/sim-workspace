@@ -10,7 +10,7 @@
 | 通信争用与校准 | topology 加载和通信 V1 单算子接入已实现；后续收敛跨算子资源争用及真机校准，不把单算子模型视为多rank联合调度 | 平台 + 算子，负载仓提供通信事实 |
 | 传输配置迁移 | 通信 V1 的 topology 已有实现；统一主机传输能力/API 就绪后，将 platform.transfers 及旧别名迁到 topo 能力/API，覆盖两种卸载与兼容策略 | 平台，训练核对行为保持 |
 | 批量寻优 | 批量执行（一个文件的参数扫描展开）与结果汇总／排行已实现，见[规模化编排设计](../sim-platform/docs/design/scaled-orchestration-design.md)与平台[批量执行](../sim-platform/docs/usage/batch-execution.md)；用户已确认训练场景不做搜索式寻优，仍待决的是何时重启 FEAT-050 | 平台 |
-| 手动镜像发布流程 | CLI preview 已发布，见[镜像指南](../sim-platform/docs/usage/offline-cli-quickstart.md)。后续整理手动打包／发布 SKILL，精简发布记录与验收编排，清理仓库及交付物中的日志、验收报告和测试产物，仅保留必要版本锁定记录；保留构建完整性及最小运行检查，不要求每次执行全套任务或对比旧版数值。暂不建设自动测试流水线、CI 或自动构建。Portal 候选组合仍未发布，见平台 `integration/portal-compatibility.json` | 平台牵头，各组件协作 |
+| 镜像发布记录与 Wiki 同步 | 平台已有手动发布技能，收尾仍要求通过 PR 回写发布记录并更新管理仓首页。用户导航迁往 Wiki 后，需在平台侧明确构建前如何固定多仓源码、推送后如何归档 registry digest、如何同步 Wiki 推荐版本，再更新技能。交付物清理仍按[维护约定](workspace-conventions.md)保留必要的锁定信息，排除日志、验收报告和测试产物。Portal 候选组合仍未发布，见平台 `integration/portal-compatibility.json`。 | 平台牵头，管理仓维护 Wiki |
 | Portal 交付边界 | 单任务、硬件变体、批量、寻优、共享池与机器 HTTPS 已在本机容器验证；真实两机、SSO 与用户侧 HTTPS 部署属门户自身交付边界，见[实施计划](../sim-portal/docs/implementation-plan.md) | sim-portal，平台记录组合 |
 | 性能校准与覆盖验证 | 使用已建模主要算子及代表性真实负载验证，明确缺失覆盖；不追求100%覆盖作为运行门槛，也不固定当前示例端到端时间 | 算子仓 + 平台 + 硬件数据提供方 |
 

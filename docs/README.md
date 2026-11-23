@@ -4,8 +4,8 @@
 
 | 当前任务 | 需要阅读 |
 | --- | --- |
-| 首次启动、得到 demo 结果 | [工作区首页](../README.md) |
-| 修改配置、批量运行、推理或阅读结果 | [首页「接下来做什么」](../README.md#接下来做什么)中的对应平台指南 |
+| 安装或更新镜像、准备 AI 技能、取得首份结果 | [用户 Wiki](https://github.com/ZhanluModelSim/sim-workspace/wiki/Home) |
+| 修改训练配置、批量执行、推理或阅读结果 | 镜像内随版本交付的 `/sim-workspace/sim-platform/docs/usage/` 与 `examples/` |
 | 克隆源码与准备开发 | [开发指南](development.md) |
 | AI 修改代码或文档 | [AGENTS.md](../AGENTS.md)与目标仓适用规则，再按任务选专题 |
 | 调整跨仓职责或接口 | [跨仓职责与协作边界](backend-requirements.md)中的相关章节 |
