@@ -1,6 +1,6 @@
 # 工作区开发指南
 
-仅运行 demo 或修改仿真配置时，从[首页](../README.md)进入平台使用文档即可。本页面向需要克隆、修改和交付源码的开发者；具体安装与测试命令仍由所属业务仓维护。
+使用发布镜像请从[用户 Wiki](https://github.com/ZhanluModelSim/sim-workspace/wiki/Home)开始。本页面向需要克隆、修改和交付源码的开发者；具体安装与测试命令仍由所属业务仓维护。
 
 ## 获取源码
 
@@ -20,19 +20,19 @@ git clone git@github.com:ZhanluModelSim/sim-portal.git sim-portal
 
 ## 选择开发环境与入口
 
-发布镜像适合固定版本体验，源码位于 `/sim-workspace/`，没有 `.git` 历史，不能直接 `git pull`。镜像内修改、导出和替换源码的方法见[平台镜像指南](../sim-platform/docs/usage/offline-cli-quickstart.md)。替换组件后，原镜像的验收结论不自动适用。
+发布镜像的 `/sim-workspace/` 保存源码快照，不含 Git 历史。自行替换组件后，需重新验证该组合。
 
 从克隆源码开发时，先遵守所在工作区的执行环境规则，再按目标仓安装说明准备环境；不要把镜像内路径与开发容器挂载路径混用。核对容器映射、Python、依赖版本和实际导入位置；源码存在不等于已安装。使用标准安装，不用 `PYTHONPATH` 或 `sys.path` 拼接替代。
 
 | 修改目标 | 最小入口 |
 | --- | --- |
-| 平台配置、执行、结果或集成 | [平台 README](../sim-platform/README.md) → [开发与验证](../sim-platform/docs/development/development-status.md) |
-| 训练模型、捕获或静态内存 | [Simulator README](../torchtitan-npu-simulator/experiments/simulator/README.md) → [环境与开发导航](../torchtitan-npu-simulator/experiments/simulator/docs/developer-guide.md) |
-| 推理模型与调用计划 | [推理 README](../inference-models-simulator/README.md) |
-| 算子语义与性能模型 | [算子 README](../operator-performance-models/README.md) |
-| Web/MCP、队列与 Worker | [Portal README](../sim-portal/README.md) |
+| 平台配置、执行、结果或集成 | [sim-platform](https://github.com/ZhanluModelSim/sim-platform) · [平台 README](../sim-platform/README.md) → [开发与验证](../sim-platform/docs/development/development-status.md) |
+| 训练模型、捕获或静态内存 | [torchtitan-npu-simulator](https://github.com/ZhanluModelSim/torchtitan-npu-simulator) · [Simulator README](../torchtitan-npu-simulator/experiments/simulator/README.md) → [环境与开发导航](../torchtitan-npu-simulator/experiments/simulator/docs/developer-guide.md) |
+| 推理模型与调用计划 | [inference-models-simulator](https://github.com/ZhanluModelSim/inference-models-simulator) · [推理 README](../inference-models-simulator/README.md) |
+| 算子语义与性能模型 | [operator-performance-models](https://github.com/ZhanluModelSim/operator-performance-models) · [算子 README](../operator-performance-models/README.md) |
+| Web/MCP、队列与 Worker | [sim-portal](https://github.com/ZhanluModelSim/sim-portal) · [Portal README](../sim-portal/README.md) |
 
-以上相对链接用于已克隆的工作区；只浏览管理仓网页时，从[首页仓库表](../README.md#参与开发)打开业务仓。进入目标仓先读适用 AGENTS.md，再按任务读取相关专题，不默认阅读所有仓库或全部架构文档。
+表中仓库入口可在线浏览；开发专题的相对路径用于已克隆的工作区。进入目标仓先读适用 AGENTS.md，再按任务读取相关专题，不默认阅读所有仓库或全部架构文档。
 
 ## 开发与交付
 
