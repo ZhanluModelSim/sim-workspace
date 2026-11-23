@@ -6,11 +6,11 @@ SIMPlatform 将训练／推理负载捕获、算子性能预测与仿真串起�
 
 ## 给 AI 安装 SIMPlatform 技能
 
-训练仿真、芯片建模和网络拓扑共用一个 `sim-platform` 技能。有平台源码时，将平台仓的 `.agents/skills/sim-platform/` 整个目录复制到当前 AI 客户端支持的技能目录，再按客户端方式重新加载。仓库位于本工作区的 `sim-platform/`。获取源码、选择安装位置和核对安装结果见[平台技能安装指南](https://github.com/ZhanluModelSim/sim-platform/blob/main/docs/usage/agent-skills.md)。
+训练仿真、芯片建模和网络拓扑共用一个 `sim-platform` 技能。从实际运行的平台源码提交或镜像对应的发布版本中取出技能，将其中的 `.agents/skills/sim-platform/` 整个目录复制到当前 AI 客户端支持的技能目录，再按客户端方式重新加载。本文下方示例使用的 `0.1.0-preview.1` 镜像早于统一技能，该版本可直接按 CLI 步骤运行。选择包含统一技能的平台版本后，按该版本的指南安装。[统一技能首次提供时的安装指南](https://github.com/ZhanluModelSim/sim-platform/blob/59a40a59150a2c4a18362a284d3b4c0a201645ef/docs/usage/agent-skills.md)
 
 也可以把这句话交给 AI：
 
-> 请从 ZhanluModelSim/sim-platform 仓库取得与运行环境配套的 sim-platform 技能，按当前客户端的方式安装或加载，并确认能找到 train、chip、topo 三个流程。
+> 请先确认我正在运行的平台源码提交或镜像对应的源码版本。从同一版本的 ZhanluModelSim/sim-platform 取得 sim-platform 技能并安装，核对 train、chip、topo 三个流程。若该版本没有统一技能，请告诉我。
 
 安装后可以直接说“用 sim-platform 对比两种训练策略”或“用 sim-platform 核对这份拓扑的端口和带宽”。运行仿真仍使用下文的容器或已准备好的平台环境。
 
