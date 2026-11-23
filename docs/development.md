@@ -20,6 +20,8 @@ git clone git@github.com:ZhanluModelSim/sim-portal.git sim-portal
 
 ## 选择开发环境与入口
 
+发布镜像的 `/sim-workspace/` 保存源码快照，不含 Git 历史。自行替换组件后，需重新验证该组合。
+
 从克隆源码开发时，先遵守所在工作区的执行环境规则，再按目标仓安装说明准备环境；不要把镜像内路径与开发容器挂载路径混用。核对容器映射、Python、依赖版本和实际导入位置；源码存在不等于已安装。使用标准安装，不用 `PYTHONPATH` 或 `sys.path` 拼接替代。
 
 | 修改目标 | 最小入口 |

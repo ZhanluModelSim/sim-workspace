@@ -4,7 +4,7 @@
 
 | 当前任务 | 需要阅读 |
 | --- | --- |
-| 安装或更新镜像、准备 AI 技能、取得首份结果 | [用户 Wiki](https://github.com/ZhanluModelSim/sim-workspace/wiki/Home) |
+| 安装或更新镜像、准备 AI 技能、取得首份结果 | [首次安装](https://github.com/ZhanluModelSim/sim-workspace/wiki/Install) · [更新已有环境](https://github.com/ZhanluModelSim/sim-workspace/wiki/Update) · [AI 技能](https://github.com/ZhanluModelSim/sim-workspace/wiki/AI-Skills) |
 | 修改训练配置、批量执行、推理或阅读结果 | 镜像内随版本交付的 `/sim-workspace/sim-platform/docs/usage/` 与 `examples/` |
 | 克隆源码与准备开发 | [开发指南](development.md) |
 | AI 修改代码或文档 | [AGENTS.md](../AGENTS.md)与目标仓适用规则，再按任务选专题 |
