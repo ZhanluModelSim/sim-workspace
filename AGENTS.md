@@ -46,9 +46,9 @@
 
 ## 协作与工程规范
 
-采用[多仓协作推荐工作流](.agents/workflows/multi-agent-development.md)：主 agent 直接完成需求讨论、总体设计、拆分、review 与验收；边界清晰的任务按需委派，小任务直接完成，不要求每仓常驻 agent。
+采用[多仓协作推荐工作流](.agents/workflows/multi-agent-development.md)。主 agent 负责需求、设计、分工与验收。小特性或紧密耦合的改动由主 agent 直接实现。较大特性有可独立验收的子任务，且并行收益高于协调成本时，再启用开发 worker 或 subagent。
 
-派发明确范围、依据、排除项和验证要求；同一可变内容只安排一个写入者。独立 reviewer 不参与其审查内容的实现。主 agent 检查实际 diff 和证据，不以局部完成代替集成通过，不让子仓自行补定跨仓语义。
+派发明确范围、依据、排除项和验证要求；同一可变内容只安排一个写入者。需要独立 review 时，选择未编写被审内容的 reviewer，在与开发对话隔离的上下文中依据需求、变更和验证证据审查。主 agent 检查实际 diff 和证据，不以局部完成代替集成通过，不让子仓自行补定跨仓语义。
 
 Python 开发遵循[公共规范](.agents/standards/python-development.md)，已有仓保留适用工具链。使用窄接口、类型、必要注释及有意义测试；不预建无消费者的抽象、空包或共享契约发行包。平台保持一个 wheel，训练 sidecar 保留自己的打包布局；标准安装是集成基础，不用 PYTHONPATH/sys.path 拼接代替。
 
