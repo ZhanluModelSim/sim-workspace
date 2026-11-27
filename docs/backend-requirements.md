@@ -40,8 +40,9 @@ SIMPortal 位于仿真链路外侧，不参与计算：它管身份、草稿、�
 
 ## 卸载、执行与修正
 
-- 训练仓生成激活/优化器双向传输与等待依赖，修正最终静态内存；平台只计算传输时间、运行 DES 和消费预算。两种卸载独立开关，不将传输时间改写为 AdamW 时间，也不重复补窗口拖尾或扣显存。
-- 平台 `platform.transfers` 为过渡配置；后续统一主机传输能力/API 就绪时，两种卸载共同切换到 topo 配置及带宽/耗时工具 API。迁移须覆盖配置来源、结果引用和旧配置兼容，不使用 HBM 带宽替代链路带宽。
+- 训练仓生成激活/优化器双向传输与等待依赖，修正最终静态内存；平台消费传输事实和内存预算，调用算子仓预测后运行 DES。两种卸载独立开关，不将传输时间改写为 AdamW 时间，也不重复补窗口拖尾或扣显存。
+- topo 提供主机链路默认值，任务 TOML 的 `platform.transfers` 可逐字段覆写。训练任务继续接受旧别名 `platform.activation_offload`，配置来源查询和结果引用统一使用 `platform.transfers`。旧 topo 缺少主机链路时，任务可显式提供双向带宽。H2D、D2H 只使用各自方向的主机链路带宽，HBM 带宽不能代用。详见[平台传输配置](https://github.com/ZhanluModelSim/sim-platform/blob/f06741a871b3ccebcbb09e38f79e4f74940d1b0a/docs/design/activation-offload.md)和[旧配置兼容规则](https://github.com/ZhanluModelSim/sim-platform/blob/f06741a871b3ccebcbb09e38f79e4f74940d1b0a/docs/design/optimizer-offload.md#配置)。
+- 训练和推理共享主机传输事实。平台向算子仓提供方向、有效字节数和各硬件变体的生效链路，通过统一预测入口取得耗时后交给 DES 调度。
 - L1 负责单图，L2 负责阶段实例及跨阶段依赖。当前训练按 GA 串行复用 F/B 后执行一次 O，不据此承诺 PP、跨阶段异步执行或推理循环。
 - vec 修正在 DES 前，保留原始预测和执行成本；DES 后处理保留原时间线与具名变化记录。MoE A2A 修正用于近似替代 MegaMoE，不接入独立 MegaMoE 实现；按最新确认在 DES 之前处理。先按层级 FQN、执行类型及通信依赖提取片段，区分原始前向、重算和梯度反向；两种系数均表示缩减比例、默认 0 且范围 [0,1]；MoE 按该比例对 min(通信串行和, vec 修正后计算串行和) 分摊折减，只改 DES 耗时，不改工作量；见[平台 DES 前修正](../sim-platform/docs/design/pre-des-corrections.md)。
 
